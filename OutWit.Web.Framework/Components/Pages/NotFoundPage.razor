@@ -1,0 +1,10 @@
+@* NotFoundPage - Reusable 404 page component *@
+@inherits NotFoundPageViewModel
+
+<div class="container not-found-page">
+    <div class="not-found-content">
+        <h1 class="not-found-title">@Title</h1>
+        <p class="not-found-message">@Message</p>
+        <a href="@HomeUrl" class="btn btn--primary">@HomeButtonText</a>
+    </div>
+</div>

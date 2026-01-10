@@ -1,0 +1,26 @@
+@* FeatureGrid - Container for feature cards with responsive grid layout *@
+@* Supports both manual ChildContent and content-driven features from markdown *@
+@inherits FeatureGridViewModel
+
+<section class="features-section container">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h2 class="section-title">@Title</h2>
+    }
+    
+    <div class="feature-grid">
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else if (Features.Any())
+        {
+            @foreach (var feature in Features)
+            {
+                <FeatureCard Icon="@feature.Icon" 
+                             Title="@feature.Title" 
+                             Description="@feature.Description" />
+            }
+        }
+    </div>
+</section>

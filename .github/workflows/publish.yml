@@ -1,0 +1,127 @@
+name: Publish Package
+run-name: "Publish: ${{ inputs.project }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project to publish'
+        required: true
+        type: choice
+        options:
+          - OutWit.Web.Framework
+          - OutWit.Web.Templates
+      pushToNuGet:
+        description: 'Push to nuget.org'
+        type: boolean
+        required: true
+        default: true
+      pushToGitHubPackages:
+        description: 'Push to GitHub Packages'
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: ${{ github.event.inputs.project }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore OutWit.slnx
+
+      - name: Resolve project path
+        id: paths
+        shell: bash
+        run: |
+          PROJECT_PATH=$(find . -name "${{ env.PROJECT }}.csproj" | head -1)
+          if [ -z "$PROJECT_PATH" ]; then
+            echo "Project ${{ env.PROJECT }}.csproj not found"
+            exit 1
+          fi
+          echo "projectPath=$PROJECT_PATH" >> $GITHUB_OUTPUT
+          echo "Resolved: $PROJECT_PATH"
+
+      - name: Build
+        run: dotnet build "${{ steps.paths.outputs.projectPath }}" -c Release -p:ContinuousIntegrationBuild=true
+
+      - name: Pack
+        run: dotnet pack "${{ steps.paths.outputs.projectPath }}" -c Release --no-build
+
+      - name: Collect packages
+        id: collect
+        run: |
+          mkdir -p NuGet
+          find . -path "*/bin/Release/*.nupkg" -exec cp {} NuGet/ \;
+          find . -path "*/bin/Release/*.snupkg" -exec cp {} NuGet/ \;
+          
+          HAS_NUPKG=$(ls NuGet/*.nupkg 2>/dev/null | wc -l)
+          HAS_SNUPKG=$(ls NuGet/*.snupkg 2>/dev/null | wc -l)
+          
+          echo "hasNupkg=$([[ $HAS_NUPKG -gt 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "hasSnupkg=$([[ $HAS_SN_UPKG -gt 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          
+          echo "Collected packages:"
+          ls -la NuGet/
+
+      - name: Add GitHub Packages source
+        if: github.event.inputs.pushToGitHubPackages == 'true'
+        run: |
+          dotnet nuget add source \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Push to nuget.org
+        if: github.event.inputs.pushToNuGet == 'true' && steps.collect.outputs.hasNupkg == 'true'
+        run: |
+          dotnet nuget push "NuGet/*.nupkg" \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Push symbols to nuget.org
+        if: github.event.inputs.pushToNuGet == 'true' && steps.collect.outputs.hasSnupkg == 'true'
+        run: |
+          dotnet nuget push "NuGet/*.snupkg" \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Push to GitHub Packages
+        if: github.event.inputs.pushToGitHubPackages == 'true' && steps.collect.outputs.hasNupkg == 'true'
+        run: |
+          dotnet nuget push "NuGet/*.nupkg" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source github \
+            --skip-duplicate
+          
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT }}-nuget
+          path: NuGet/*
+          retention-days: 7

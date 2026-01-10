@@ -1,0 +1,93 @@
+@* DocPage - Reusable documentation page component with Table of Contents *@
+@inherits DocPageViewModel
+
+<SeoHead Title="@(Doc?.Title ?? "Documentation")" 
+         Description="@(Doc?.Description ?? "")"
+         OgType="article" />
+
+<div class="container article-page">
+    <LoadingState IsLoading="Loading"
+                  HasContent="Doc != null"
+                  LoadingText="Loading documentation..."
+                  NotFoundText="Documentation not found."
+                  BackLinkUrl="@BackUrl"
+                  BackLinkText="@BackLinkText">
+        @if (Doc != null)
+        {
+            <div class="article-layout">
+                @if (ShowToc && Doc.TableOfContents.Count > 0)
+                {
+                    @* Left sidebar: Table of Contents *@
+                    <aside class="article-toc">
+                        <div class="article-toc__sticky">
+                            <h3 class="article-toc__title">@TocTitle</h3>
+                            <nav class="article-toc__nav">
+                                <ul class="article-toc__list">
+                                    @foreach (var item in Doc.TableOfContents)
+                                    {
+                                        <li class="article-toc__item article-toc__item--level-@item.Level">
+                                            <a href="#@item.Id" 
+                                               class="article-toc__link @(item.Id == ActiveHeadingId ? "article-toc__link--active" : "")"
+                                               @onclick="() => ScrollToHeading(item.Id)"
+                                               @onclick:preventDefault>
+                                                @item.Title
+                                            </a>
+                                            @if (item.Children.Count > 0)
+                                            {
+                                                <ul class="article-toc__sublist">
+                                                    @foreach (var child in item.Children)
+                                                    {
+                                                        <li class="article-toc__item article-toc__item--level-@child.Level">
+                                                            <a href="#@child.Id" 
+                                                               class="article-toc__link @(child.Id == ActiveHeadingId ? "article-toc__link--active" : "")"
+                                                               @onclick="() => ScrollToHeading(child.Id)"
+                                                               @onclick:preventDefault>
+                                                                @child.Title
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </aside>
+                }
+                
+                @* Right: Main content *@
+                <article class="article-content @(ShowToc && Doc.TableOfContents.Count > 0 ? "" : "article-content--full")">
+                    <PageHeader Title="@Doc.Title"
+                                ShowMeta="false"
+                                CssClass="article-content__header" />
+
+                    <div class="article-content__body prose">
+                        @((MarkupString)Doc.HtmlContent)
+                    </div>
+                    
+                    @* Navigation to prev/next doc *@
+                    @if (Doc.PreviousPage != null || Doc.NextPage != null)
+                    {
+                        <nav class="doc-nav">
+                            @if (Doc.PreviousPage != null)
+                            {
+                                <a href="/docs/@Doc.PreviousPage.Slug" class="doc-nav__link doc-nav__link--prev">
+                                    <span class="doc-nav__label">Previous</span>
+                                    <span class="doc-nav__title">@Doc.PreviousPage.Title</span>
+                                </a>
+                            }
+                            @if (Doc.NextPage != null)
+                            {
+                                <a href="/docs/@Doc.NextPage.Slug" class="doc-nav__link doc-nav__link--next">
+                                    <span class="doc-nav__label">Next</span>
+                                    <span class="doc-nav__title">@Doc.NextPage.Title</span>
+                                </a>
+                            }
+                        </nav>
+                    }
+                </article>
+            </div>
+        }
+    </LoadingState>
+</div>

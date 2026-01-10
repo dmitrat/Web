@@ -1,0 +1,295 @@
+/* 
+ * OutWit Framework - Base Styles
+ * Reset, Typography, Utilities
+ * Color variables are defined in site-specific theme.css
+ */
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+:root {
+    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    --font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --font-size-base: 1rem;
+    --font-size-sm: 0.875rem;
+    --font-size-xs: 0.75rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+
+    /* Container */
+    --container-max-width: 65rem;
+    --container-padding: 1rem;
+}
+
+/* ============================================
+   CSS RESET
+   ============================================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+}
+
+body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+
+.container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    width: 100%;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-text-heading);
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+h1:focus,
+h2:focus,
+h3:focus {
+    outline: none;
+}
+
+p {
+    margin-bottom: 1em;
+    font-weight: 400;
+}
+
+a {
+    color: var(--color-accent-blue);
+    text-decoration: none;
+    transition: opacity var(--transition-base);
+}
+
+a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+strong,
+b {
+    color: var(--color-text-heading);
+}
+
+ul,
+ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 2rem 0;
+}
+
+/* ============================================
+   PROSE - Article Content
+   ============================================ */
+
+.prose {
+    max-width: 80ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* ============================================
+   TAGS
+   ============================================ */
+
+.tag {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    pointer-events: none;
+    cursor: default;
+}
+
+.tag--outline {
+    border: 1px solid var(--color-accent-blue);
+    color: var(--color-accent-blue);
+    background: transparent;
+}
+
+.tag--outline:hover {
+    color: var(--color-accent-blue);
+    text-decoration: none;
+    opacity: 1;
+}
+
+.tag--filled {
+    background: var(--color-accent-blue);
+    color: white;
+}
+
+.tag--filled:hover {
+    color: white;
+    text-decoration: none;
+    opacity: 1;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: none;
+}
+
+.btn--primary {
+    background: var(--color-accent-blue);
+    color: white;
+}
+
+.btn--primary:hover {
+    opacity: 0.9;
+    text-decoration: none;
+}
+
+.btn--secondary {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover {
+    background: var(--color-surface-hover);
+    text-decoration: none;
+}
+
+.btn--outline {
+    border: 1px solid var(--color-accent-blue);
+    color: var(--color-accent-blue);
+    background: transparent;
+}
+
+.btn--outline:hover {
+    background: var(--color-accent-blue);
+    color: white;
+    text-decoration: none;
+}
+
+/* ============================================
+   FORMS
+   ============================================ */
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--color-text-primary);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 157, 255, 0.15);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.loading {
+    text-align: center;
+    color: var(--color-text-secondary);
+    padding: 2rem;
+}

@@ -1,0 +1,35 @@
+@inherits BlogCardViewModel
+
+<article class="blog-card card card--clickable">
+    <a href="/blog/@Post.Slug" class="blog-card__link">
+        @if (!string.IsNullOrEmpty(Post.FeaturedImage))
+        {
+            <div class="blog-card__image">
+                <img src="@Post.FeaturedImage" alt="@Post.Title" loading="lazy" />
+            </div>
+        }
+        
+        <div class="blog-card__content">
+            <div class="blog-card__meta">
+                <time datetime="@Post.PublishDate.ToString("yyyy-MM-dd")">
+                    @Post.PublishDate.ToString("MMMM d, yyyy")
+                </time>
+                <span class="blog-card__reading-time">@Post.ReadingTimeMinutes min read</span>
+            </div>
+            
+            <h3 class="blog-card__title">@Post.Title</h3>
+            
+            <p class="blog-card__summary">@Post.Summary</p>
+            
+            @if (Post.Tags.Count > 0)
+            {
+                <div class="blog-card__tags">
+                    @foreach (var tag in Post.Tags.Take(3))
+                    {
+                        <span class="tag">@tag</span>
+                    }
+                </div>
+            }
+        </div>
+    </a>
+</article>

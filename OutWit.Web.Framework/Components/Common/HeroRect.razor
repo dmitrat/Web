@@ -1,0 +1,87 @@
+@* HeroRect - Hero section for product pages with logo, tagline and customizable buttons *@
+@inherits HeroRectViewModel
+
+<section class="hero hero--product">
+    @if (!string.IsNullOrEmpty(BadgeText))
+    {
+        <div class="hero__badge">@BadgeText</div>
+    }
+    
+    <div class="hero__content-box">
+        @if (HasLogo)
+        {
+            <div class="hero__logo-container">
+                @if (HasThemeLogos)
+                {
+                    @* Two logos - switch based on theme via CSS *@
+                    <img src="@ResolvedLogoDarkUrl" alt="@Title" class="hero__product-logo hero__logo-dark" />
+                    <img src="@ResolvedLogoLightUrl" alt="@Title" class="hero__product-logo hero__logo-light" />
+                }
+                else
+                {
+                    @* Single logo for both themes *@
+                    <img src="@LogoUrl" alt="@Title" class="hero__product-logo" />
+                }
+            </div>
+        }
+        
+        <h1 class="hero__product-title">@Title</h1>
+        
+        @if (!string.IsNullOrEmpty(Tagline))
+        {
+            <p class="hero__tagline">@((MarkupString)Tagline)</p>
+        }
+        
+        @if (ShowActions)
+        {
+            <div class="actions">
+                @if (OnPrimaryButtonClick.HasDelegate)
+                {
+                    <button type="button" class="button primary-button" @onclick="OnPrimaryButtonClick">
+                        @PrimaryButtonText
+                    </button>
+                }
+                else
+                {
+                    <a href="@PrimaryButtonUrl" class="button primary-button">
+                        @PrimaryButtonText
+                    </a>
+                }
+                
+                @if (!string.IsNullOrEmpty(SecondaryButtonUrl) || OnSecondaryButtonClick.HasDelegate)
+                {
+                    @if (OnSecondaryButtonClick.HasDelegate)
+                    {
+                        <button type="button" class="button secondary-button" @onclick="OnSecondaryButtonClick">
+                            @if (SecondaryButtonIcon != null)
+                            {
+                                @SecondaryButtonIcon
+                            }
+                            <span>@SecondaryButtonText</span>
+                        </button>
+                    }
+                    else if (SecondaryButtonExternal)
+                    {
+                        <a href="@SecondaryButtonUrl" class="button secondary-button" target="_blank" rel="noopener noreferrer">
+                            @if (SecondaryButtonIcon != null)
+                            {
+                                @SecondaryButtonIcon
+                            }
+                            <span>@SecondaryButtonText</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@SecondaryButtonUrl" class="button secondary-button">
+                            @if (SecondaryButtonIcon != null)
+                            {
+                                @SecondaryButtonIcon
+                            }
+                            <span>@SecondaryButtonText</span>
+                        </a>
+                    }
+                }
+            </div>
+        }
+    </div>
+</section>

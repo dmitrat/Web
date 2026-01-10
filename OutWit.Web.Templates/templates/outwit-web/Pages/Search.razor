@@ -1,0 +1,9 @@
+@page "/search"
+@using OutWit.Web.Framework.Components.Pages
+
+<SearchPage Query="@Query" />
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Query { get; set; }
+}

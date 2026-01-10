@@ -1,0 +1,51 @@
+@* SearchPage - Reusable search page component *@
+@inherits SearchPageViewModel
+
+<SeoHead Title="@SeoTitle" Description="@SeoDescription" />
+
+<div class="container search-page">
+    <h1 class="search-page__title">@Title</h1>
+    
+    <div class="search-page__input-wrapper">
+        <svg class="search-page__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" 
+               class="search-page__input" 
+               placeholder="@Placeholder"
+               @bind="Query"
+               @bind:event="oninput"
+               @onkeyup="HandleKeyUp" />
+        @if (!string.IsNullOrEmpty(Query))
+        {
+            <button class="search-page__clear" @onclick="ClearSearch" aria-label="Clear search">×</button>
+        }
+    </div>
+    
+    @if (Loading)
+    {
+        <p class="search-page__loading">@LoadingText</p>
+    }
+    else if (Searched && Results.Count == 0)
+    {
+        <div class="search-page__empty">
+            <p>No results found for "<strong>@Query</strong>"</p>
+            <p class="search-page__empty-hint">@NoResultsHint</p>
+        </div>
+    }
+    else if (Results.Count > 0)
+    {
+        <p class="search-page__count">Found @Results.Count result(s) for "<strong>@Query</strong>"</p>
+        
+        <div class="search-results">
+            @foreach (var result in Results)
+            {
+                <ContentCard Title="@result.Title"
+                             Url="@result.Url"
+                             Description="@RenderExcerptMarkup(result.Description, result.MatchedTerms)"
+                             TypeLabel="@GetTypeLabel(result.ContentType)" />
+            }
+        </div>
+    }
+</div>

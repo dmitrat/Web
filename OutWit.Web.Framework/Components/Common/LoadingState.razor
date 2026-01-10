@@ -1,0 +1,23 @@
+@* LoadingState - Wrapper for loading/not-found/content pattern *@
+@inherits LoadingStateViewModel
+
+@if (IsLoading)
+{
+    <div class="loading-state loading-state--loading">
+        <p class="loading">@LoadingText</p>
+    </div>
+}
+else if (!HasContent)
+{
+    <div class="loading-state loading-state--empty">
+        <p class="loading-state__message">@NotFoundText</p>
+        @if (!string.IsNullOrEmpty(BackLinkUrl))
+        {
+            <a href="@BackLinkUrl" class="btn btn--outline">@BackLinkText</a>
+        }
+    </div>
+}
+else
+{
+    @ChildContent
+}

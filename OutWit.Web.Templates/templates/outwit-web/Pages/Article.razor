@@ -1,0 +1,9 @@
+@page "/article/{Slug}"
+@using OutWit.Web.Framework.Components.Pages
+
+<ArticlePage Slug="@Slug" />
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+}

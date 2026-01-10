@@ -1,0 +1,159 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <!--
+    OutWit.Web.Framework MSBuild Targets
+    Automatically generates content index, sitemap, robots.txt, search index, RSS feed, and static HTML pages after build
+    
+    Usage:
+      - Automatically runs on Release builds
+      - Set <OutWitGenerateContent>true</OutWitGenerateContent> to force generation
+      - Set <OutWitSiteUrl>https://example.com</OutWitSiteUrl> to specify site URL
+      - Set <OutWitGenerateStaticPages>false</OutWitGenerateStaticPages> to disable SSG
+      - Set <OutWitGenerateSearchIndex>false</OutWitGenerateSearchIndex> to disable search index
+      - Set <OutWitGenerateRssFeed>false</OutWitGenerateRssFeed> to disable RSS feed
+      - Set <OutWitGenerateOgImages>true</OutWitGenerateOgImages> to enable OG image generation (requires Playwright)
+      - Set <OutWitHostingProvider>cloudflare|netlify|vercel|github|none</OutWitHostingProvider> for hosting-specific files
+  -->
+  
+  <!-- Define default properties -->
+  <PropertyGroup>
+    <!-- Enable/disable content generation (default: true for Release builds) -->
+    <OutWitGenerateContent Condition="'$(OutWitGenerateContent)' == ''">$(Configuration.Contains('Release'))</OutWitGenerateContent>
+    
+    <!-- Enable/disable static HTML generation (default: true) -->
+    <OutWitGenerateStaticPages Condition="'$(OutWitGenerateStaticPages)' == ''">true</OutWitGenerateStaticPages>
+    
+    <!-- Enable/disable search index generation (default: true) -->
+    <OutWitGenerateSearchIndex Condition="'$(OutWitGenerateSearchIndex)' == ''">true</OutWitGenerateSearchIndex>
+    
+    <!-- Enable/disable RSS feed generation (default: true) -->
+    <OutWitGenerateRssFeed Condition="'$(OutWitGenerateRssFeed)' == ''">true</OutWitGenerateRssFeed>
+    
+    <!-- Enable/disable OG image generation (default: false, requires Playwright) -->
+    <OutWitGenerateOgImages Condition="'$(OutWitGenerateOgImages)' == ''">false</OutWitGenerateOgImages>
+    
+    <!-- Hosting provider for config files (default: cloudflare) -->
+    <OutWitHostingProvider Condition="'$(OutWitHostingProvider)' == ''">cloudflare</OutWitHostingProvider>
+    
+    <!-- Always generate in CI/CD environments -->
+    <OutWitGenerateContent Condition="'$(CI)' == 'true' OR '$(TF_BUILD)' == 'true' OR '$(GITHUB_ACTIONS)' == 'true'">true</OutWitGenerateContent>
+    
+    <!-- Path to wwwroot (auto-detected) -->
+    <OutWitWwwRootPath Condition="'$(OutWitWwwRootPath)' == ''">$(MSBuildProjectDirectory)\wwwroot</OutWitWwwRootPath>
+    
+    <!-- Path to content folder -->
+    <OutWitContentPath Condition="'$(OutWitContentPath)' == ''">$(OutWitWwwRootPath)\content</OutWitContentPath>
+    
+    <!-- Site URL (read from site.config.json if not specified) -->
+    <OutWitSiteUrl Condition="'$(OutWitSiteUrl)' == ''"></OutWitSiteUrl>
+    
+    <!-- 
+      Path to the generate-content script
+      - For NuGet package: scripts folder is next to this .targets file in build\
+      - For project reference: scripts folder is sibling to build\ folder
+    -->
+    <_OutWitScriptPath Condition="Exists('$(MSBuildThisFileDirectory)scripts\generate-content.ps1')">$(MSBuildThisFileDirectory)scripts\generate-content.ps1</_OutWitScriptPath>
+    <_OutWitScriptPath Condition="'$(_OutWitScriptPath)' == '' AND Exists('$(MSBuildThisFileDirectory)..\scripts\generate-content.ps1')">$(MSBuildThisFileDirectory)..\scripts\generate-content.ps1</_OutWitScriptPath>
+    
+    <!-- PowerShell executable: use pwsh if available, otherwise powershell (Windows) -->
+    <_OutWitPowerShell Condition="'$(OS)' == 'Windows_NT'">powershell</_OutWitPowerShell>
+    <_OutWitPowerShell Condition="'$(OS)' != 'Windows_NT'">pwsh</_OutWitPowerShell>
+  </PropertyGroup>
+
+  <!--
+    Target: OutWitEnsureStaticFiles
+    Ensures index.json, robots.txt, sitemap.xml, search-index.json, feed.xml exist before build (required for StaticWebAssets)
+  -->
+  <Target Name="OutWitEnsureStaticFiles" BeforeTargets="Build">
+    <PropertyGroup>
+      <_IndexJsonPath>$(OutWitContentPath)\index.json</_IndexJsonPath>
+      <_RobotsTxtPath>$(OutWitWwwRootPath)\robots.txt</_RobotsTxtPath>
+      <_SitemapXmlPath>$(OutWitWwwRootPath)\sitemap.xml</_SitemapXmlPath>
+      <_SearchIndexPath>$(OutWitWwwRootPath)\search-index.json</_SearchIndexPath>
+      <_FeedXmlPath>$(OutWitWwwRootPath)\feed.xml</_FeedXmlPath>
+    </PropertyGroup>
+    
+    <!-- Create empty index.json if it doesn't exist -->
+    <WriteLinesToFile 
+        File="$(_IndexJsonPath)"
+        Lines='{"projects":[],"docs":[],"articles":[],"blog":[],"features":[]}'
+        Overwrite="false"
+        Condition="!Exists('$(_IndexJsonPath)')" />
+    
+    <!-- Create placeholder robots.txt if it doesn't exist -->
+    <WriteLinesToFile 
+        File="$(_RobotsTxtPath)"
+        Lines="User-agent: *;Allow: /"
+        Overwrite="false"
+        Condition="!Exists('$(_RobotsTxtPath)')" />
+    
+    <!-- Create placeholder sitemap.xml if it doesn't exist -->
+    <WriteLinesToFile 
+        File="$(_SitemapXmlPath)"
+        Lines='&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;&lt;/urlset&gt;'
+        Overwrite="false"
+        Condition="!Exists('$(_SitemapXmlPath)')" />
+    
+    <!-- Create empty search-index.json if it doesn't exist -->
+    <WriteLinesToFile 
+        File="$(_SearchIndexPath)"
+        Lines='[]'
+        Overwrite="false"
+        Condition="!Exists('$(_SearchIndexPath)')" />
+    
+    <!-- Create placeholder feed.xml if it doesn't exist -->
+    <WriteLinesToFile 
+        File="$(_FeedXmlPath)"
+        Lines='&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;rss version="2.0"&gt;&lt;channel&gt;&lt;/channel&gt;&lt;/rss&gt;'
+        Overwrite="false"
+        Condition="!Exists('$(_FeedXmlPath)')" />
+  </Target>
+
+  <!-- 
+    Target: OutWitGenerateContentIndex
+    Runs after build to generate all content files
+  -->
+  <Target Name="OutWitGenerateContentIndex" 
+          AfterTargets="Build" 
+          Condition="'$(OutWitGenerateContent)' == 'true' AND Exists('$(OutWitWwwRootPath)')">
+    
+    <Message Importance="high" Text="OutWit.Web.Framework: Generating content index..." />
+    
+    <!-- Check if script exists -->
+    <Error Text="OutWit.Web.Framework: generate-content.ps1 script not found. Checked paths: $(MSBuildThisFileDirectory)scripts\ and $(MSBuildThisFileDirectory)..\scripts\"
+           Condition="'$(_OutWitScriptPath)' == '' OR !Exists('$(_OutWitScriptPath)')" />
+    
+    <!-- Check if site.config.json exists -->
+    <PropertyGroup>
+      <_SiteConfigPath>$(OutWitWwwRootPath)\site.config.json</_SiteConfigPath>
+      <_HasSiteConfig>false</_HasSiteConfig>
+      <_HasSiteConfig Condition="Exists('$(_SiteConfigPath)')">true</_HasSiteConfig>
+    </PropertyGroup>
+    
+    <!-- Read SiteUrl from site.config.json if not provided -->
+    <Exec Command="$(_OutWitPowerShell) -NoProfile -Command &quot;(Get-Content '$(_SiteConfigPath)' -Raw | ConvertFrom-Json).baseUrl&quot;"
+          ConsoleToMSBuild="true"
+          Condition="'$(OutWitSiteUrl)' == '' AND '$(_HasSiteConfig)' == 'true'"
+          IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="OutWitSiteUrl" />
+    </Exec>
+    
+    <!-- Trim whitespace from URL -->
+    <PropertyGroup>
+      <OutWitSiteUrl>$(OutWitSiteUrl.Trim())</OutWitSiteUrl>
+    </PropertyGroup>
+    
+    <!-- Warn if no site URL -->
+    <Warning Text="OutWit.Web.Framework: No SiteUrl found. Set OutWitSiteUrl property or add baseUrl to site.config.json. Skipping content generation."
+             Condition="'$(OutWitSiteUrl)' == ''" />
+    
+    <!-- Run the content generation script with all parameters -->
+    <Exec Command="$(_OutWitPowerShell) -NoProfile -ExecutionPolicy Bypass -File &quot;$(_OutWitScriptPath)&quot; -ContentPath &quot;$(OutWitContentPath)&quot; -OutputPath &quot;$(OutWitWwwRootPath)&quot; -SiteUrl &quot;$(OutWitSiteUrl)&quot; -GenerateStaticPages $(OutWitGenerateStaticPages) -GenerateSearchIndex $(OutWitGenerateSearchIndex) -GenerateRssFeed $(OutWitGenerateRssFeed) -GenerateOgImages $(OutWitGenerateOgImages) -HostingProvider &quot;$(OutWitHostingProvider)&quot;"
+          Condition="'$(OutWitSiteUrl)' != ''" 
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          IgnoreExitCode="false" />
+    
+    <Message Importance="high" Text="OutWit.Web.Framework: Content generation complete." Condition="'$(OutWitSiteUrl)' != ''" />
+  </Target>
+
+</Project>

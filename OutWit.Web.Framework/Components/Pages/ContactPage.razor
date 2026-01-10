@@ -1,0 +1,14 @@
+@* ContactPage - Reusable contact page component *@
+@inherits ContactPageViewModel
+
+<SeoHead Title="@SeoTitle" Description="@SeoDescription" />
+
+<div class="container contact-page">
+    <h1>@Title</h1>
+    @if (!string.IsNullOrEmpty(IntroText))
+    {
+        <p class="contact-intro">@IntroText</p>
+    }
+    
+    <ContactForm />
+</div>

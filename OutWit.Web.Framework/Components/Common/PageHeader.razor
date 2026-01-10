@@ -1,0 +1,41 @@
+@* PageHeader - Standard page header with title, meta, and tags *@
+@inherits PageHeaderViewModel
+
+<header class="page-header @CssClass">
+    @if (!string.IsNullOrEmpty(BackLinkUrl))
+    {
+        <a href="@BackLinkUrl" class="page-header__back">@BackLinkText</a>
+    }
+    
+    <h1 class="page-header__title">@Title</h1>
+    
+    @if (ShowMeta && (Date.HasValue || ReadingTimeMinutes > 0))
+    {
+        <div class="page-header__meta">
+            @if (Date.HasValue)
+            {
+                <time datetime="@Date.Value.ToString("yyyy-MM-dd")">
+                    @Date.Value.ToString("MMMM d, yyyy")
+                </time>
+            }
+            @if (Date.HasValue && ReadingTimeMinutes > 0)
+            {
+                <span class="page-header__separator">•</span>
+            }
+            @if (ReadingTimeMinutes > 0)
+            {
+                <span>@ReadingTimeMinutes min read</span>
+            }
+        </div>
+    }
+    
+    @if (Tags?.Count > 0)
+    {
+        <TagList Tags="@Tags" Variant="outline" CssClass="page-header__tags" />
+    }
+    
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+</header>

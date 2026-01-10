@@ -1,0 +1,60 @@
+@* FooterExpanded - Alternative footer with link columns (like Docusaurus) *@
+@inherits FooterExpandedViewModel
+
+<footer class="footer footer--expanded">
+    <div class="footer__container container">
+        @if (Config?.Footer.LinkGroups?.Count > 0)
+        {
+            <div class="footer__links">
+                @foreach (var group in Config.Footer.LinkGroups)
+                {
+                    <div class="footer__column">
+                        <h4 class="footer__column-title">@group.Title</h4>
+                        <ul class="footer__column-list">
+                            @foreach (var link in group.Links)
+                            {
+                                <li>
+                                    @if (link.External || (!string.IsNullOrEmpty(link.Href) && (link.Href.StartsWith("http://") || link.Href.StartsWith("https://"))))
+                                    {
+                                        <a href="@link.Href" 
+                                           class="footer__link" 
+                                           target="_blank" 
+                                           rel="noopener noreferrer">
+                                            @link.Title
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@link.Href" class="footer__link">
+                                            @link.Title
+                                        </a>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        }
+        
+        @if (Config?.Footer.SocialLinks?.Count > 0)
+        {
+            <div class="footer__social">
+                @foreach (var social in Config.Footer.SocialLinks.Where(s => !string.IsNullOrEmpty(s.Url)))
+                {
+                    <a href="@social.Url" 
+                       class="footer__social-link" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       aria-label="@social.Platform">
+                        <SocialIcon Platform="@social.Platform" />
+                    </a>
+                }
+            </div>
+        }
+
+        <div class="footer__bottom">
+            <p class="footer__copyright">Copyright © @DateTime.Now.Year @Config?.Footer.Copyright</p>
+        </div>
+    </div>
+</footer>

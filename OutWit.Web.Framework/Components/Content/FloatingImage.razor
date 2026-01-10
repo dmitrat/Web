@@ -1,0 +1,14 @@
+@namespace OutWit.Web.Framework.Components.Content
+@* Floating image with text wrap support *@
+@inherits FloatingImageViewModel
+
+<div class="floating-image floating-image--@Position" style="max-width: @(Width)px">
+    <img src="@GetResolvedSrc()" alt="@Alt" loading="lazy" decoding="async" />
+</div>
+
+@if (!string.IsNullOrEmpty(InnerContent))
+{
+    @((MarkupString)GetRenderedContent())
+}
+
+<div style="clear: both"></div>

@@ -1,0 +1,36 @@
+@* HeroFlat - Basic hero section with title, author, and action buttons *@
+@inherits HeroFlatViewModels
+
+<section class="hero">
+    <h1>
+        @((MarkupString)Title)
+    </h1>
+    @if (!string.IsNullOrEmpty(AuthorName))
+    {
+        <div class="bio">
+            <p class="name">@AuthorName</p>
+            @if (!string.IsNullOrEmpty(AuthorTitle))
+            {
+                <p class="title">@AuthorTitle</p>
+            }
+        </div>
+    }
+    @if (ShowActions)
+    {
+        <div class="actions">
+            <a href="@ProjectsAnchor" class="button project-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                <span>@ProjectsButtonText</span>
+            </a>
+            <a href="@BlogUrl" class="button blog-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>@BlogButtonText</span>
+            </a>
+        </div>
+    }
+</section>

@@ -1,0 +1,97 @@
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project to test'
+        required: true
+        type: choice
+        options:
+          - OutWit.Web.Framework
+      configuration:
+        description: 'Build configuration'
+        required: false
+        type: choice
+        default: 'Release'
+        options: [ 'Release', 'Debug' ]
+      filter:
+        description: 'Optional test filter (e.g., Category=Unit or FullyQualifiedName~Namespace.Class)'
+        required: false
+        type: string
+      verbosity:
+        description: 'dotnet test verbosity'
+        required: false
+        type: choice
+        default: 'normal'
+        options: [ 'quiet', 'minimal', 'normal', 'detailed', 'diagnostic' ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: ${{ github.event.inputs.project }}
+      CONFIGURATION: ${{ github.event.inputs.configuration || 'Release' }}
+      FILTER: ${{ github.event.inputs.filter }}
+      VERBOSITY: ${{ github.event.inputs.verbosity || 'normal' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore OutWit.sln
+
+      - name: Resolve test project path
+        id: paths
+        shell: bash
+        run: |
+          TEST_PATH=$(find . -name "${{ env.PROJECT }}.Tests.csproj" | head -1)
+          if [ -z "$TEST_PATH" ]; then
+            echo "Test project ${{ env.PROJECT }}.Tests.csproj not found"
+            exit 1
+          fi
+          echo "testPath=$TEST_PATH" >> $GITHUB_OUTPUT
+          echo "Resolved: $TEST_PATH"
+
+      - name: Build
+        run: dotnet build OutWit.sln --configuration ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Run tests
+        shell: bash
+        run: |
+          ARGS="test ${{ steps.paths.outputs.testPath }}"
+          ARGS="$ARGS --configuration ${{ env.CONFIGURATION }}"
+          ARGS="$ARGS --no-build"
+          ARGS="$ARGS --verbosity ${{ env.VERBOSITY }}"
+          ARGS="$ARGS --logger trx;LogFileName=test.trx"
+          ARGS="$ARGS --results-directory TestResults"
+          
+          if [ -n "${{ env.FILTER }}" ]; then
+            ARGS="$ARGS --filter '${{ env.FILTER }}'"
+          fi
+          
+          dotnet $ARGS
+
+      - name: Upload TRX results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ env.PROJECT }}-${{ env.CONFIGURATION }}
+          path: TestResults/**
+          if-no-files-found: ignore

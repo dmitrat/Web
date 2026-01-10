@@ -1,0 +1,145 @@
+/* Project Page Styles */
+
+.project-page {
+    padding: 3rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.project-page__header {
+    margin-bottom: 3rem;
+}
+
+.project-page__back {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.project-page__back:hover {
+    color: var(--color-accent-blue);
+}
+
+.project-page__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    margin-bottom: 1rem;
+}
+
+.project-page__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Disable hover effects on project page tags - they're informational only */
+.project-page__tags .tag {
+    pointer-events: none;
+    cursor: default;
+}
+
+.project-page__content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.project-page__content h2 {
+    font-size: 1.75rem;
+    margin: 2.5rem 0 1rem;
+    color: var(--color-accent-blue);
+}
+
+.project-page__content h3 {
+    font-size: 1.35rem;
+    margin: 2rem 0 0.75rem;
+    color: var(--color-text-heading);
+}
+
+.project-page__content p {
+    margin-bottom: 1.25rem;
+}
+
+.project-page__content ul,
+.project-page__content ol {
+    margin: 1rem 0 1.5rem 1.5rem;
+}
+
+.project-page__content li {
+    margin-bottom: 0.5rem;
+}
+
+.project-page__actions {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .project-page {
+        padding: 2rem 1rem;
+    }
+
+    .project-page__title {
+        font-size: 2rem;
+    }
+}
+
+/* YouTube Embed - Responsive 16:9 */
+.youtube-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--color-panel-bg);
+}
+
+.youtube-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Floating Image - Text Wrap */
+.floating-image {
+    margin: 1rem;
+}
+
+.floating-image--right {
+    float: right;
+    margin-left: 2rem;
+    margin-right: 0;
+}
+
+.floating-image--left {
+    float: left;
+    margin-right: 2rem;
+    margin-left: 0;
+}
+
+.floating-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+
+    .floating-image,
+    .floating-image--left,
+    .floating-image--right {
+        float: none;
+        margin: 1.5rem auto;
+        max-width: 100% !important;
+    }
+}

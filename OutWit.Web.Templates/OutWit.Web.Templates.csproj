@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <Version>1.0.9</Version>
+    <Title>OutWit Web Site Templates</Title>
+    <Description>Project templates for creating static websites using OutWit.Web.Framework with Blazor WebAssembly, markdown content, and SEO optimization.</Description>
+    <PackageTags>dotnet-new;templates;blazor;webassembly;static-site;markdown</PackageTags>
+    
+    <TargetFramework>net10.0</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    
+    <!-- Template packages don't need symbols -->
+    <IncludeSymbols>false</IncludeSymbols>
+    
+    <!-- Suppress warnings -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <!-- Template content -->
+  <ItemGroup>
+    <Content Include="templates\**\*" Exclude="templates\**\bin\**;templates\**\obj\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="**\*" />
+  </ItemGroup>
+
+</Project>

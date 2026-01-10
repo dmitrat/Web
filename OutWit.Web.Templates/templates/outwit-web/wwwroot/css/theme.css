@@ -1,0 +1,75 @@
+/* 
+ * {{SiteName}} Theme - Color Scheme
+ * Customize these CSS variables to match your brand
+ */
+
+:root {
+    /* Light theme colors */
+    --color-background: #fbfbfb;
+    --color-bg-secondary: #f5f5f5;
+    --color-surface: #f9fafb;
+    --color-surface-hover: #e5e7eb;
+    --color-panel-bg: #f9fafb;
+    --color-panel-hover: #e5e7eb;
+
+    /* Text colors */
+    --color-text-primary: #333333;
+    --color-text-heading: #111111;
+    --color-text-secondary: #666666;
+    --color-text-body: #444444;
+
+    /* Accent colors */
+    --color-accent: {{AccentColor}};
+    --color-accent-blue: {{AccentColor}};
+    --color-accent-green: #2EBD55;
+
+    /* Border */
+    --color-border: #EAEAEA;
+
+    /* Status colors */
+    --color-success: #2EBD55;
+    --color-error: #E53E3E;
+    --color-warning: #F59E0B;
+
+    /* Code blocks */
+    --color-code-bg: #f6f8fa;
+    --color-code-text: #24292f;
+
+    /* Logo visibility */
+    --logo-light-display: block;
+    --logo-dark-display: none;
+
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    /* Dark theme colors */
+    --color-background: #1f1f1f;
+    --color-bg-secondary: #1a1a1a;
+    --color-surface: #1e1e1e;
+    --color-surface-hover: #2a2a2a;
+    --color-panel-bg: #1e1e1e;
+    --color-panel-hover: #2a2a2a;
+
+    /* Text colors */
+    --color-text-primary: #d1d1d1;
+    --color-text-heading: #f5f5f5;
+    --color-text-secondary: #A0A0A0;
+    --color-text-body: #b5b5b5;
+
+    /* Accent color (primary) */
+    --color-accent: {{AccentColor}};
+
+    /* Border */
+    --color-border: #333333;
+
+    /* Code blocks */
+    --color-code-bg: #161b22;
+    --color-code-text: #c9d1d9;
+
+    /* Logo visibility */
+    --logo-light-display: none;
+    --logo-dark-display: block;
+
+    color-scheme: dark;
+}

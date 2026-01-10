@@ -1,0 +1,25 @@
+/* 
+ * OutWit Web Framework - Main Stylesheet
+ * Import this file and your site-specific theme.css
+ */
+
+/* Base - Reset, Typography, Buttons, Forms */
+@import url('base.css');
+
+/* Layout */
+@import url('header.css');
+@import url('footer.css');
+
+/* Components */
+@import url('contentcard.css');
+@import url('components.css');
+
+/* Pages */
+@import url('home.css');
+@import url('project.css');
+@import url('blog.css');
+@import url('article.css');
+@import url('search.css');
+@import url('contact.css');
+@import url('about.css');
+@import url('notfound.css');

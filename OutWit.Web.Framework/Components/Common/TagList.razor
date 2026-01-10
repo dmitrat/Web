@@ -1,0 +1,16 @@
+@* TagList - Reusable tag display component *@
+@inherits TagListViewModel
+
+@if (Tags?.Count > 0)
+{
+    <div class="tag-list @CssClass">
+        @foreach (var tag in Tags.Take(MaxTags))
+        {
+            <span class="tag @GetVariantClass()">@tag</span>
+        }
+        @if (Tags.Count > MaxTags && ShowOverflow)
+        {
+            <span class="tag-list__overflow">+@(Tags.Count - MaxTags)</span>
+        }
+    </div>
+}

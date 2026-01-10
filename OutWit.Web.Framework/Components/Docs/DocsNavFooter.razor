@@ -1,0 +1,26 @@
+@using OutWit.Web.Framework.Models
+@inherits DocsNavFooterViewModel
+
+<div class="docs-nav-footer">
+    <div class="docs-nav-footer__links">
+        @if (Previous != null)
+        {
+            <a href="/docs/@Previous.Slug" class="docs-nav-footer__link docs-nav-footer__link--prev">
+                <span class="docs-nav-footer__label">Previous</span>
+                <span class="docs-nav-footer__title">← @Previous.Title</span>
+            </a>
+        }
+        else
+        {
+            <div></div>
+        }
+        
+        @if (Next != null)
+        {
+            <a href="/docs/@Next.Slug" class="docs-nav-footer__link docs-nav-footer__link--next">
+                <span class="docs-nav-footer__label">Next</span>
+                <span class="docs-nav-footer__title">@Next.Title →</span>
+            </a>
+        }
+    </div>
+</div>

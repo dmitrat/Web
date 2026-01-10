@@ -1,0 +1,37 @@
+@* HomePage - Reusable home page with customizable Hero section *@
+@inherits HomePageViewModel
+
+<SeoHead Title="@SeoTitle" Description="@SeoDescription" OgType="website" />
+
+@* Hero section - provided by site via ChildContent *@
+<CascadingValue Value="@GetFirstProjectAnchor()" Name="FirstProjectAnchor">
+    @if (HeroContent != null)
+    {
+        @HeroContent
+    }
+</CascadingValue>
+
+<section id="projects" class="projects-section container">
+    
+    @if (!string.IsNullOrEmpty(ProjectsSectionTitle))
+    {
+        <h2 class="section-title">@ProjectsSectionTitle</h2>
+    }
+    
+
+    <LoadingState IsLoading="Loading"
+                  HasContent="Projects.Count > 0"
+                  LoadingText="Loading projects..."
+                  NotFoundText="No projects found.">
+        <div class="projects-list">
+            @foreach (var project in Projects)
+            {
+                <ContentCard Title="@project.Title"
+                             Url="@($"/project/{project.Slug}")"
+                             Description="@RenderSummary(project.Summary)"
+                             Tags="@project.Tags"
+                             Id="@($"project-{project.Slug}")"/>
+            }
+        </div>
+    </LoadingState>
+</section>

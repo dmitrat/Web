@@ -1,0 +1,174 @@
+@* Header - Configurable navigation from site.config.json *@
+@* Dropdown menus are populated dynamically from content (Articles, Projects) *@
+@inherits HeaderViewModel
+
+<header class="header">
+    <div class="header__container container">
+        <a href="/" class="header__logo">
+            @* Two logos - switch based on theme via CSS *@
+            <img src="@(Config?.LogoDark ?? "/images/logo-dark.svg")" alt="@Config?.SiteName" class="header__logo-image header__logo-dark" />
+            <img src="@(Config?.LogoLight ?? "/images/logo-light.svg")" alt="@Config?.SiteName" class="header__logo-image header__logo-light" />
+            <span class="header__site-name">@(Config?.SiteName?.ToUpperInvariant() ?? "OUTWIT")</span>
+        </a>
+
+        <nav class="header__nav" role="navigation">
+            <ul class="header__nav-list">
+                @foreach (var navItem in Config?.Navigation ?? [])
+                {
+                    @if (navItem.Children?.Count > 0)
+                    {
+                        @* Dropdown menu - trigger doesn't navigate, only shows dropdown *@
+                        <li class="header__nav-item header__dropdown">
+                            <span class="header__nav-link header__dropdown-trigger @(IsActiveDropdown(navItem) ? "header__nav-link--active" : "")">
+                                @navItem.Title
+                                <svg class="header__dropdown-arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                            <ul class="header__dropdown-menu">
+                                @foreach (var child in navItem.Children)
+                                {
+                                    <li>
+                                        @if (child.External)
+                                        {
+                                            <a href="@child.Href" 
+                                               class="header__dropdown-link"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                @child.Title
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@child.Href" 
+                                               class="header__dropdown-link @(IsActive(child.Href) ? "header__dropdown-link--active" : "")">
+                                                @child.Title
+                                            </a>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                    else if (navItem.External)
+                    {
+                        @* External link *@
+                        <li class="header__nav-item">
+                            <a href="@navItem.Href" 
+                               class="header__nav-link header__nav-link--external" 
+                               target="_blank" 
+                               rel="noopener noreferrer">
+                                @navItem.Title
+                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header__external-icon">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        @* Regular link *@
+                        <li class="header__nav-item">
+                            <a href="@navItem.Href" class="header__nav-link @(IsActive(navItem.Href) ? "header__nav-link--active" : "")">
+                                @navItem.Title
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </nav>
+
+        <div class="header__actions">
+            @* Search input *@
+            <div class="header__search">
+                <button type="button" class="header__search-icon" @onclick="TriggerSearch" aria-label="Search">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <input type="text" placeholder="@(Config?.Search.Placeholder ?? "Search...")" @bind="SearchQuery" @bind:event="oninput" @onkeypress="HandleSearch" />
+            </div>
+            
+            @* Theme toggle - half circle like original *@
+            <button class="header__theme-toggle" @onclick="ToggleTheme" title="Toggle theme">
+                <span class="header__theme-toggle-icon"></span>
+            </button>
+            
+            @* Mobile menu button *@
+            <button class="header__mobile-toggle" @onclick="ToggleMobileMenu" aria-label="Toggle menu">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    @if (MobileMenuOpen)
+                    {
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    }
+                    else
+                    {
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    }
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    @* Mobile menu *@
+    @if (MobileMenuOpen)
+    {
+        <div class="header__mobile-menu">
+            <nav class="header__mobile-nav">
+                @foreach (var navItem in Config?.Navigation ?? [])
+                {
+                    @if (navItem.External)
+                    {
+                        <a href="@navItem.Href" 
+                           class="header__mobile-link" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           @onclick="CloseMobileMenu">
+                            @navItem.Title
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@navItem.Href" 
+                           class="header__mobile-link @(IsActive(navItem.Href) ? "header__mobile-link--active" : "")" 
+                           @onclick="CloseMobileMenu">
+                            @navItem.Title
+                        </a>
+                    }
+                    
+                    @* Show children as sub-items in mobile *@
+                    @if (navItem.Children?.Count > 0)
+                    {
+                        @foreach (var child in navItem.Children)
+                        {
+                            @if (child.External)
+                            {
+                                <a href="@child.Href" 
+                                   class="header__mobile-link header__mobile-link--sub" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   @onclick="CloseMobileMenu">
+                                    @child.Title
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@child.Href" 
+                                   class="header__mobile-link header__mobile-link--sub @(IsActive(child.Href) ? "header__mobile-link--active" : "")" 
+                                   @onclick="CloseMobileMenu">
+                                    @child.Title
+                                </a>
+                            }
+                        }
+                    }
+                }
+            </nav>
+        </div>
+    }
+</header>

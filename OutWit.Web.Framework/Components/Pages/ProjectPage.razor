@@ -1,0 +1,36 @@
+@* ProjectPage - Reusable project detail page component *@
+@inherits ProjectPageViewModel
+
+<SeoHead Title="@(Project?.Title ?? "Project")" 
+         Description="@(Project?.Description ?? "")"
+         OgType="article" />
+
+<div class="container project-page">
+    <LoadingState IsLoading="Loading"
+                  HasContent="Project != null"
+                  LoadingText="Loading project..."
+                  NotFoundText="Project not found."
+                  BackLinkUrl="@BackUrl"
+                  BackLinkText="@BackLinkText">
+        @if (Project != null)
+        {
+            <PageHeader Title="@Project.Title"
+                        Tags="@Project.Tags"
+                        ShowMeta="false"
+                        CssClass="project-page__header" />
+            
+            <div class="project-page__content prose">
+                <ContentWithComponents HtmlContent="@ProcessedContent" Components="@EmbeddedComponents" />
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Project.Url))
+            {
+                <div class="project-page__actions">
+                    <a href="@Project.Url" class="btn btn--primary" target="_blank" rel="noopener noreferrer">
+                        @VisitButtonText
+                    </a>
+                </div>
+            }
+        }
+    </LoadingState>
+</div>

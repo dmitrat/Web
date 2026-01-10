@@ -1,0 +1,28 @@
+@* FeatureCard - Individual feature card with icon, title and description *@
+@inherits FeatureCardViewModel
+
+<div class="feature-card">
+    @if (!string.IsNullOrEmpty(Icon))
+    {
+        <div class="feature-card__icon">@Icon</div>
+    }
+    else if (IconContent != null)
+    {
+        <div class="feature-card__icon">
+            @IconContent
+        </div>
+    }
+    
+    <h3 class="feature-card__title">@Title</h3>
+    
+    @if (DescriptionContent != null)
+    {
+        <div class="feature-card__description">
+            @DescriptionContent
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Description))
+    {
+        <p class="feature-card__description">@((MarkupString)Description)</p>
+    }
+</div>

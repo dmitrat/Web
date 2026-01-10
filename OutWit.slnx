@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Directory/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+  </Folder>
+  <Folder Name="/GitHub/">
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/pack.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/release.yml" />
+    <File Path=".github/workflows/test.yml" />
+  </Folder>
+  <Project Path="OutWit.Web.Framework.Tests/OutWit.Web.Framework.Tests.csproj" />
+  <Project Path="OutWit.Web.Framework/OutWit.Web.Framework.csproj" />
+  <Project Path="OutWit.Web.Templates/OutWit.Web.Templates.csproj" />
+</Solution>

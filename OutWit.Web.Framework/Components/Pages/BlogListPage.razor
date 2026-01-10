@@ -1,0 +1,58 @@
+@* BlogListPage - Reusable blog listing page component *@
+@inherits BlogListPageViewModel
+
+<SeoHead Title="@SeoTitle" Description="@SeoDescription" />
+
+<div class="container blog-page">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h1 class="blog-page__title">@Title</h1>
+    }
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <p class="blog-page__intro">@Description</p>
+    }
+    
+    <LoadingState IsLoading="Loading"
+                  HasContent="Posts.Count > 0"
+                  LoadingText="Loading posts..."
+                  NotFoundText="No blog posts found.">
+        <div class="blog-layout">
+            @* Left sidebar: Recent posts *@
+            <aside class="blog-sidebar">
+                <div class="blog-sidebar__sticky">
+                    <h3 class="blog-sidebar__title">@SidebarTitle</h3>
+                    <nav class="blog-sidebar__nav">
+                        @foreach (var yearGroup in Posts.Take(SidebarMaxPosts).GroupBy(p => p.PublishDate.Year).OrderByDescending(g => g.Key))
+                        {
+                            <div class="blog-sidebar__year">@yearGroup.Key</div>
+                            <ul class="blog-sidebar__list">
+                                @foreach (var post in yearGroup.OrderByDescending(p => p.PublishDate))
+                                {
+                                    <li>
+                                        <a href="@GetPostUrl(post.Slug)" class="blog-sidebar__link">@post.Title</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </nav>
+                </div>
+            </aside>
+            
+            @* Right: Post cards *@
+            <div class="blog-posts">
+                @foreach (var post in Posts)
+                {
+                    <ContentCard Title="@post.Title"
+                                 Url="@GetPostUrl(post.Slug)"
+                                 Description="@(new MarkupString(post.Summary ?? ""))"
+                                 Tags="@post.Tags"
+                                 ShowDate="true"
+                                 Date="@post.PublishDate"
+                                 ShowReadingTime="true"
+                                 ReadingTimeMinutes="@post.ReadingTimeMinutes" />
+                }
+            </div>
+        </div>
+    </LoadingState>
+</div>

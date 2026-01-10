@@ -1,0 +1,94 @@
+@inherits  ContactFormViewModel
+
+<form class="contact-form" @onsubmit="HandleSubmit">
+    @if (Submitted)
+    {
+        <div class="contact-form__success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <h3>Thank you for your message!</h3>
+            <p>We will get back to you shortly.</p>
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" 
+                   id="name" 
+                   name="name" 
+                   class="form-input" 
+                   @bind="Name" 
+                   required 
+                   placeholder="Your name" />
+        </div>
+
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" 
+                   id="email" 
+                   name="email" 
+                   class="form-input" 
+                   @bind="Email" 
+                   required 
+                   placeholder="your@email.com" />
+        </div>
+
+        @if (Config?.Contact.MessageTypes is { Count: > 0 })
+        {
+            <div class="form-group">
+                <label for="messageType" class="form-label">Type</label>
+                <select id="messageType" 
+                        name="messageType" 
+                        class="form-select" 
+                        @bind="MessageType">
+                    <option value="">-- Select --</option>
+                    @foreach (var type in Config.Contact.MessageTypes)
+                    {
+                        <option value="@type.Value">@type.Label</option>
+                    }
+                </select>
+            </div>
+        }
+
+        <div class="form-group">
+            <label for="message" class="form-label">Message</label>
+            <textarea id="message" 
+                      name="message" 
+                      class="form-textarea" 
+                      rows="5" 
+                      @bind="Message" 
+                      required 
+                      placeholder="How can we help you?"></textarea>
+        </div>
+
+        <!-- Honeypot field (hidden, should remain empty) -->
+        <input type="text" name="_gotcha" style="display:none" @bind="Honeypot" tabindex="-1" autocomplete="off" />
+
+        <!-- Cloudflare Turnstile widget container -->
+        @if (!string.IsNullOrEmpty(TurnstileSiteKey))
+        {
+            <div id="turnstile-container"></div>
+        }
+
+        @if (!string.IsNullOrEmpty(Error))
+        {
+            <div class="contact-form__error">
+                <p>@Error</p>
+            </div>
+        }
+
+        <button type="submit" class="btn btn--primary" disabled="@(IsSubmitting || (RequiresTurnstile && !TurnstileVerified))">
+            @if (IsSubmitting)
+            {
+                <span>Sending...</span>
+            }
+            else
+            {
+                <span>Send Message</span>
+            }
+        </button>
+    }
+</form>

@@ -1,0 +1,72 @@
+@inherits SeoHeadViewModel
+
+<HeadContent>
+    <title>@Title</title>
+    <meta name="description" content="@Description" />
+    
+    @if (!string.IsNullOrEmpty(ResolvedCanonicalUrl))
+    {
+        <link rel="canonical" href="@ResolvedCanonicalUrl" />
+    }
+    
+    @if (NoIndex)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
+    
+    @* RSS Feed Link *@
+    @if (IncludeRssFeed && !string.IsNullOrEmpty(RssFeedUrl))
+    {
+        <link rel="alternate" type="application/rss+xml" title="@(SiteName ?? "RSS Feed")" href="@RssFeedUrl" />
+    }
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="@Title" />
+    <meta property="og:description" content="@Description" />
+    <meta property="og:type" content="@OgType" />
+    <meta property="og:locale" content="en_US" />
+    @if (!string.IsNullOrEmpty(SiteName))
+    {
+        <meta property="og:site_name" content="@SiteName" />
+    }
+    @if (!string.IsNullOrEmpty(ResolvedCanonicalUrl))
+    {
+        <meta property="og:url" content="@ResolvedCanonicalUrl" />
+    }
+    @if (!string.IsNullOrEmpty(ResolvedSocialImage))
+    {
+        <meta property="og:image" content="@ResolvedSocialImage" />
+    }
+    @if (!string.IsNullOrEmpty(LogoUrl))
+    {
+        <meta property="og:logo" content="@LogoUrl" />
+    }
+    @if (OgType == "article" && PublishDate.HasValue)
+    {
+        <meta property="article:published_time" content="@PublishDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")" />
+    }
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@Title" />
+    <meta name="twitter:description" content="@Description" />
+    @if (!string.IsNullOrEmpty(ResolvedSocialImage))
+    {
+        <meta name="twitter:image" content="@ResolvedSocialImage" />
+    }
+    @if (!string.IsNullOrEmpty(TwitterHandle))
+    {
+        <meta name="twitter:site" content="@TwitterHandle" />
+    }
+    
+    @if (Keywords.Count > 0)
+    {
+        <meta name="keywords" content="@string.Join(", ", Keywords)" />
+    }
+    
+    @* JSON-LD Structured Data for Articles *@
+    @if (!string.IsNullOrEmpty(JsonLdScript))
+    {
+        <script type="application/ld+json">@((MarkupString)JsonLdScript)</script>
+    }
+</HeadContent>

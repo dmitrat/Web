@@ -1,0 +1,218 @@
+/* Article Page Styles */
+
+/* Two-column layout: TOC sidebar + content */
+.article-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+    padding: 2rem 0;
+    max-width: 1400px;
+}
+
+/* Left sidebar: Table of Contents */
+.article-toc {
+    position: relative;
+}
+
+.article-toc__sticky {
+    position: sticky;
+    top: 100px;
+    /* Below fixed header */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 1rem;
+    scrollbar-width: thin;
+}
+
+.article-toc__title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.article-toc__list,
+.article-toc__sublist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.article-toc__sublist {
+    margin-left: 0.5rem;
+}
+
+.article-toc__item {
+    margin-bottom: 0.25rem;
+}
+
+/* Indent H2 and H3 items */
+.article-toc__item--level-2 {
+    padding-left: 0.75rem;
+}
+
+.article-toc__item--level-3 {
+    padding-left: 1.5rem;
+}
+
+.article-toc__link {
+    display: block;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    padding: 0.35rem 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.article-toc__link:hover {
+    color: var(--color-text-heading);
+    border-left-color: var(--color-border);
+}
+
+/* Active TOC item */
+.article-toc__link--active {
+    color: var(--color-accent-green);
+    font-weight: 500;
+    border-left-color: var(--color-accent-green);
+}
+
+/* Right: Main content */
+.article-content {
+    min-width: 0;
+    /* Prevent grid blowout */
+}
+
+.article-content__header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.article-content__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+}
+
+.article-content__date {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.article-content__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.article-content__body {
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Headings in article content need IDs for anchor links */
+.article-content__body h1,
+.article-content__body h2,
+.article-content__body h3 {
+    scroll-margin-top: 100px;
+    /* Account for fixed header */
+}
+
+.article-content__body h1 {
+    font-size: 1.75rem;
+    margin: 2.5rem 0 1rem;
+    color: var(--color-accent-blue);
+}
+
+.article-content__body h2 {
+    font-size: 1.5rem;
+    margin: 2rem 0 0.75rem;
+    color: var(--color-accent-blue);
+}
+
+.article-content__body h3 {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--color-text-heading);
+}
+
+/* Code blocks in articles */
+.article-content__body pre {
+    background: var(--color-bg-secondary);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+.article-content__body code {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.article-content__body :not(pre)>code {
+    background: var(--color-bg-secondary);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
+
+/* Tables in articles */
+.article-content__body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+.article-content__body th,
+.article-content__body td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid var(--color-border);
+}
+
+.article-content__body th {
+    background: var(--color-bg-secondary);
+    font-weight: 600;
+}
+
+.article-content__body tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Responsive: Hide TOC on mobile */
+@media (max-width: 900px) {
+    .article-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .article-toc {
+        display: none;
+    }
+
+    .article-content__title {
+        font-size: 2rem;
+    }
+}
+
+/* Responsive: Smaller screens */
+@media (max-width: 600px) {
+    .article-content__title {
+        font-size: 1.75rem;
+    }
+
+    .article-content__body {
+        font-size: 1rem;
+    }
+}

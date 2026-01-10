@@ -1,0 +1,28 @@
+@* BlogPostPage - Reusable blog post detail page component *@
+@inherits BlogPostPageViewModel
+
+<SeoHead Title="@PageTitle" Description="@(Post?.Description ?? "")" />
+
+<article class="container blog-post">
+    <LoadingState IsLoading="Loading"
+                  HasContent="Post != null"
+                  LoadingText="Loading..."
+                  NotFoundText="The blog post you're looking for doesn't exist."
+                  BackLinkUrl="@BackUrl"
+                  BackLinkText="@BackLinkText">
+        @if (Post != null)
+        {
+            <PageHeader Title="@Post.Title"
+                        Date="@Post.PublishDate"
+                        ReadingTimeMinutes="@Post.ReadingTimeMinutes"
+                        Tags="@Post.Tags"
+                        BackLinkUrl="@BackUrl"
+                        BackLinkText="@BackLinkText"
+                        CssClass="blog-post__header" />
+            
+            <div class="prose blog-post__content">
+                @((MarkupString)Post.HtmlContent)
+            </div>
+        }
+    </LoadingState>
+</article>

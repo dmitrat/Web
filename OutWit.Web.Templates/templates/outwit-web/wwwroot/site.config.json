@@ -1,0 +1,32 @@
+{
+  "siteName": "{{SiteName}}",
+  "baseUrl": "{{BaseUrl}}",
+  "logoLight": "/images/logo-light.svg",
+  "logoDark": "/images/logo-dark.svg",
+  "defaultTheme": "dark",
+  "navigation": [
+    { "title": "Home", "href": "/" },
+    { "title": "Blog", "href": "/blog" },
+    { "title": "Contact", "href": "/contact" }
+  ],
+  "footer": {
+    "copyright": "{{AuthorName}}",
+    "linkGroups": [],
+    "socialLinks": [
+      { "platform": "github", "url": "{{GitHubUrl}}" }
+    ]
+  },
+  "contact": {
+    "apiUrl": "",
+    "formId": "",
+    "turnstileSiteKey": ""
+  },
+  "search": {
+    "enabled": true,
+    "placeholder": "Search..."
+  },
+  "seo": {
+    "defaultImage": "/images/social-card.png",
+    "twitterHandle": "{{TwitterHandle}}"
+  }
+}

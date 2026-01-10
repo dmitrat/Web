@@ -1,0 +1,9 @@
+@page "/blog/{Slug}"
+@using OutWit.Web.Framework.Components.Pages
+
+<BlogPostPage Slug="@Slug" />
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+}

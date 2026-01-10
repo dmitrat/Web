@@ -1,0 +1,40 @@
+@inherits BlogListViewModel
+
+<div class="blog-list">
+    @if (Posts.Count == 0)
+    {
+        <p class="blog-list__empty">No posts found.</p>
+    }
+    else
+    {
+        <div class="blog-list__grid">
+            @foreach (var post in Posts)
+            {
+                <BlogCard Post="@post" />
+            }
+        </div>
+        
+        @if (TotalPages > 1)
+        {
+            <nav class="blog-list__pagination" aria-label="Pagination">
+                @if (CurrentPage > 1)
+                {
+                    <a href="@GetPageUrl(CurrentPage - 1)" class="btn btn--secondary btn--sm">
+                        ← Previous
+                    </a>
+                }
+                
+                <span class="blog-list__page-info">
+                    Page @CurrentPage of @TotalPages
+                </span>
+                
+                @if (CurrentPage < TotalPages)
+                {
+                    <a href="@GetPageUrl(CurrentPage + 1)" class="btn btn--secondary btn--sm">
+                        Next →
+                    </a>
+                }
+            </nav>
+        }
+    }
+</div>

@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- NuGet Package Configuration (specific to this project) -->
+    <Version>1.0.9</Version>
+    <Description>Blazor WebAssembly framework for creating static websites with markdown content, SEO optimization, and automatic content generation.</Description>
+    <PackageTags>blazor;webassembly;static-site;markdown;seo;open-graph;rss</PackageTags>
+    
+    <!-- Include build assets in the package -->
+    <DevelopmentDependency>false</DevelopmentDependency>
+    
+    <!-- Make targets/props available to ProjectReference consumers -->
+    <TargetsForTfmSpecificBuildOutput>GetBuildAssets</TargetsForTfmSpecificBuildOutput>
+    
+    <!-- Suppress NuGet warnings about PowerShell scripts in build folder (they are MSBuild scripts, not install scripts) -->
+    <NoWarn>$(NoWarn);NU5110;NU5111</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+    <PackageReference Include="OutWit.Common.MVVM.Blazor" Version="2.0.0" />
+    <PackageReference Include="Markdig" Version="0.44.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+  <!-- Include build targets and scripts in NuGet package -->
+  <ItemGroup>
+    <!-- MSBuild targets file - automatically imported by consuming projects -->
+    <None Include="build\OutWit.Web.Framework.targets" Pack="true" PackagePath="build\" />
+    
+    <!-- PowerShell scripts for content generation -->
+    <None Include="scripts\generate-content.ps1" Pack="true" PackagePath="build\scripts\" />
+    <None Include="scripts\generate-static-pages.ps1" Pack="true" PackagePath="build\scripts\" />
+    <None Include="scripts\generate-search-index.ps1" Pack="true" PackagePath="build\scripts\" />
+    <None Include="scripts\generate-rss-feed.ps1" Pack="true" PackagePath="build\scripts\" />
+    <None Include="scripts\generate-og-images.ps1" Pack="true" PackagePath="build\scripts\" />
+  </ItemGroup>
+  
+  <!-- Make build assets available to ProjectReference consumers -->
+  <Target Name="GetBuildAssets">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(MSBuildProjectDirectory)\build\OutWit.Web.Framework.targets" TargetPath="build\" />
+    </ItemGroup>
+  </Target>
+
+</Project>

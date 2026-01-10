@@ -1,0 +1,72 @@
+name: Pack
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project to pack'
+        required: true
+        type: choice
+        options:
+          - OutWit.Web.Framework
+          - OutWit.Web.Templates
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: ${{ github.event.inputs.project }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore OutWit.slnx
+
+      - name: Resolve project path
+        id: paths
+        shell: bash
+        run: |
+          PROJECT_PATH=$(find . -name "${{ env.PROJECT }}.csproj" | head -1)
+          if [ -z "$PROJECT_PATH" ]; then
+            echo "Project ${{ env.PROJECT }}.csproj not found"
+            exit 1
+          fi
+          echo "projectPath=$PROJECT_PATH" >> $GITHUB_OUTPUT
+          echo "Resolved: $PROJECT_PATH"
+
+      - name: Build
+        run: dotnet build "${{ steps.paths.outputs.projectPath }}" --configuration Release --no-restore -p:ContinuousIntegrationBuild=true
+
+      - name: Pack
+        run: dotnet pack "${{ steps.paths.outputs.projectPath }}" --configuration Release --no-build
+
+      - name: Collect packages
+        run: |
+          mkdir -p NuGet
+          find . -path "*/bin/Release/*.nupkg" -exec cp {} NuGet/ \;
+          find . -path "*/bin/Release/*.snupkg" -exec cp {} NuGet/ \;
+          ls -la NuGet/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ env.PROJECT }}
+          path: NuGet/*
+          if-no-files-found: error

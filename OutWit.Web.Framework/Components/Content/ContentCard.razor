@@ -1,0 +1,52 @@
+@using Microsoft.AspNetCore.Components
+
+@* Universal content card for projects, blog posts, search results *@
+@inherits ContentCardViewModel
+
+<article class="content-card" id="@Id">
+    <h2 class="content-card__title">
+        <a href="@Url">@Title</a>
+    </h2>
+    
+    @if (ShowDate || ShowReadingTime)
+    {
+        <div class="content-card__meta">
+            @if (ShowDate && Date.HasValue)
+            {
+                <time datetime="@Date.Value.ToString("yyyy-MM-dd")">
+                    @Date.Value.ToString("MMMM d, yyyy")
+                </time>
+            }
+            @if (ShowDate && ShowReadingTime)
+            {
+                <span class="content-card__separator">·</span>
+            }
+            @if (ShowReadingTime && ReadingTimeMinutes > 0)
+            {
+                <span>@ReadingTimeMinutes min read</span>
+            }
+        </div>
+    }
+    
+    @if (Description != null)
+    {
+        <div class="content-card__description">@Description</div>
+    }
+    
+    <div class="content-card__footer">
+        <div class="content-card__tags">
+            @if (!string.IsNullOrEmpty(TypeLabel))
+            {
+                <span class="content-card__type-tag">@TypeLabel</span>
+            }
+            @if (Tags?.Count > 0)
+            {
+                @foreach (var tag in Tags.Take(MaxTags))
+                {
+                    <span class="content-card__tag">@tag</span>
+                }
+            }
+        </div>
+        <a href="@Url" class="content-card__more">More...</a>
+    </div>
+</article>

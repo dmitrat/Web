@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{SiteName}}</title>
+    <base href="/" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <!-- Fonts with preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+          as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" />
+    </noscript>
+
+    <!-- Styles - Theme first, then framework -->
+    <link href="_content/OutWit.Web.Framework/css/outwit-framework.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+    <!-- Cloudflare Turnstile for contact form (explicit render mode for SPA) -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
+    <script>
+        // Prevent flash of wrong theme
+        (function () {
+            const theme = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Loading indicator -->
+        <div class="loading-indicator" style="display: flex; justify-content: center; align-items: center; height: 100vh; color: var(--color-text-secondary);">
+            <svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+            </svg>
+            <span style="margin-left: 1rem;">Loading...</span>
+        </div>
+    </div>
+
+    <noscript>
+        <div style="padding: 2rem; text-align: center; background: var(--color-background, #1f1f1f); color: var(--color-text-primary, #d1d1d1); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <h1 style="margin-bottom: 1rem;">JavaScript Required</h1>
+            <p>This site requires JavaScript to function properly. Please enable JavaScript in your browser.</p>
+        </div>
+    </noscript>
+
+    <script src="_content/OutWit.Web.Framework/js/framework.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+@using Microsoft.AspNetCore.Components.Web
+@using OutWit.Web.Framework.Services
+@using OutWit.Web.Framework.Models
+
+@inherits MarkdownRendererViewModel
+
+<article class="markdown-content prose">
+    @((MarkupString)HtmlContent)
+</article>

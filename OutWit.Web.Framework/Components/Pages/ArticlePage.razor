@@ -1,0 +1,58 @@
+@* ArticlePage - Reusable article page component with Table of Contents *@
+@inherits ArticlePageViewModel
+
+<SeoHead Title="@(Article?.Title ?? "Article")" 
+         Description="@(Article?.Description ?? "")"
+         OgType="article" />
+
+<div class="container article-page">
+    <LoadingState IsLoading="Loading"
+                  HasContent="Article != null"
+                  LoadingText="Loading article..."
+                  NotFoundText="Article not found."
+                  BackLinkUrl="@BackUrl"
+                  BackLinkText="@BackLinkText">
+        @if (Article != null)
+        {
+            <div class="article-layout">
+                @if (ShowToc && Article.TableOfContents.Count > 0)
+                {
+                    @* Left sidebar: Table of Contents *@
+                    <aside class="article-toc">
+                        <div class="article-toc__sticky">
+                            <h3 class="article-toc__title">@TocTitle</h3>
+                            <nav class="article-toc__nav">
+                                <ul class="article-toc__list">
+                                    @foreach (var item in Article.TableOfContents)
+                                    {
+                                        <li class="article-toc__item article-toc__item--level-@item.Level">
+                                            <a href="#@item.Id" 
+                                               class="article-toc__link @(item.Id == ActiveHeadingId ? "article-toc__link--active" : "")"
+                                               @onclick="() => ScrollToHeading(item.Id)"
+                                               @onclick:preventDefault>
+                                                @item.Text
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </aside>
+                }
+                
+                @* Right: Main content *@
+                <article class="article-content @(ShowToc && Article.TableOfContents.Count > 0 ? "" : "article-content--full")">
+                    <PageHeader Title="@Article.Title"
+                                Date="@(Article.PublishDate != default ? Article.PublishDate : null)"
+                                Tags="@Article.Tags"
+                                ShowMeta="@(Article.PublishDate != default)"
+                                CssClass="article-content__header" />
+
+                    <div class="article-content__body prose">
+                        <ContentWithComponents HtmlContent="@ProcessedContent" Components="@EmbeddedComponents" />
+                    </div>
+                </article>
+            </div>
+        }
+    </LoadingState>
+</div>

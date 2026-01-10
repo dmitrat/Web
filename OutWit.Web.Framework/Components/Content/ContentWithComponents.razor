@@ -1,0 +1,117 @@
+@namespace OutWit.Web.Framework.Components.Content
+@using OutWit.Web.Framework.Content
+@using OutWit.Web.Framework.Services
+@inject ComponentRegistry ComponentRegistry
+
+@* Renders HTML content with embedded components inline at their placeholder positions *@
+
+@foreach (var segment in _cachedSegments)
+{
+    if (segment.IsComponent)
+    {
+        var componentType = ComponentRegistry.GetComponentType(segment.Component!.Type);
+        if (componentType != null)
+        {
+            <DynamicComponent Type="@componentType" Parameters="@GetParameters(segment.Component)" />
+        }
+        else
+        {
+            <div class="embedded-component-unknown">
+                <em>Unknown component: @segment.Component.Type</em>
+            </div>
+        }
+    }
+    else
+    {
+        @((MarkupString)segment.Html)
+    }
+}
+
+@code {
+    [Parameter] public string HtmlContent { get; set; } = "";
+    [Parameter] public List<EmbeddedComponent> Components { get; set; } = new();
+
+    private record ContentSegment(string Html, bool IsComponent, EmbeddedComponent? Component);
+    
+    private List<ContentSegment> _cachedSegments = new();
+    private string _lastHtmlContent = "";
+    private int _lastComponentsHash = 0;
+
+    protected override void OnParametersSet()
+    {
+        var componentsHash = Components?.Count ?? 0;
+        if (HtmlContent != _lastHtmlContent || componentsHash != _lastComponentsHash)
+        {
+            _lastHtmlContent = HtmlContent;
+            _lastComponentsHash = componentsHash;
+            _cachedSegments = BuildContentSegments();
+        }
+    }
+
+    private List<ContentSegment> BuildContentSegments()
+    {
+        var segments = new List<ContentSegment>();
+        var content = HtmlContent;
+        
+        if (string.IsNullOrEmpty(content))
+            return segments;
+        
+        var componentLookup = Components?.ToDictionary(c => c.PlaceholderId) ?? new();
+        var placeholderPattern = @"<!--component:(\w+)-->";
+        var matches = System.Text.RegularExpressions.Regex.Matches(content, placeholderPattern);
+        
+        int lastEnd = 0;
+        foreach (System.Text.RegularExpressions.Match match in matches)
+        {
+            if (match.Index > lastEnd)
+            {
+                var htmlBefore = content[lastEnd..match.Index];
+                if (!string.IsNullOrWhiteSpace(htmlBefore))
+                {
+                    segments.Add(new ContentSegment(htmlBefore, false, null));
+                }
+            }
+            
+            var placeholderId = match.Groups[1].Value;
+            if (componentLookup.TryGetValue(placeholderId, out var component))
+            {
+                segments.Add(new ContentSegment("", true, component));
+            }
+            
+            lastEnd = match.Index + match.Length;
+        }
+        
+        if (lastEnd < content.Length)
+        {
+            var htmlAfter = content[lastEnd..];
+            if (!string.IsNullOrWhiteSpace(htmlAfter))
+            {
+                segments.Add(new ContentSegment(htmlAfter, false, null));
+            }
+        }
+        
+        return segments;
+    }
+
+    private Dictionary<string, object?> GetParameters(EmbeddedComponent component)
+    {
+        var parameters = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        
+        foreach (var param in component.Parameters)
+        {
+            parameters[param.Key] = param.Value;
+        }
+        
+        if (!string.IsNullOrEmpty(component.InnerContent))
+        {
+            parameters["InnerContent"] = component.InnerContent;
+        }
+        
+        if (!string.IsNullOrEmpty(component.BasePath))
+        {
+            parameters["BasePath"] = component.BasePath;
+        }
+        
+        return parameters;
+    }
+}

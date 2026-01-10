@@ -1,0 +1,27 @@
+@using OutWit.Web.Framework.Models
+@inherits DocsSidebarViewModel
+
+<aside class="docs-sidebar">
+    <nav class="docs-sidebar__nav" aria-label="Documentation navigation">
+        @foreach (var sidebarSection in Sections)
+        {
+            <div class="docs-sidebar__section">
+                @if (!string.IsNullOrEmpty(sidebarSection.Title))
+                {
+                    <h4 class="docs-sidebar__section-title">@sidebarSection.Title</h4>
+                }
+                <ul class="docs-sidebar__list">
+                    @foreach (var item in sidebarSection.Items)
+                    {
+                        <li class="docs-sidebar__item">
+                            <a href="@item.Href" 
+                               class="docs-sidebar__link @(item.Href == CurrentPath ? "docs-sidebar__link--active" : "")">
+                                @item.Title
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </nav>
+</aside>
