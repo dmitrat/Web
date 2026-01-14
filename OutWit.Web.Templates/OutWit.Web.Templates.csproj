@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Title>OutWit Web Site Templates</Title>
     <Description>Project templates for creating static websites using OutWit.Web.Framework with Blazor WebAssembly, markdown content, and SEO optimization.</Description>
     <PackageTags>dotnet-new;templates;blazor;webassembly;static-site;markdown</PackageTags>
