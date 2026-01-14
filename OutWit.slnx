@@ -12,5 +12,7 @@
   </Folder>
   <Project Path="OutWit.Web.Framework.Tests/OutWit.Web.Framework.Tests.csproj" />
   <Project Path="OutWit.Web.Framework/OutWit.Web.Framework.csproj" />
+  <Project Path="OutWit.Web.Generator/OutWit.Web.Generator.csproj" />
+  <Project Path="OutWit.Web.Generator.Tests/OutWit.Web.Generator.Tests.csproj" />
   <Project Path="OutWit.Web.Templates/OutWit.Web.Templates.csproj" />
 </Solution>
