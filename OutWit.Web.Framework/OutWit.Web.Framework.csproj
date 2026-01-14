@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     
     <!-- NuGet Package Configuration (specific to this project) -->
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <Description>Blazor WebAssembly framework for creating static websites with markdown content, SEO optimization, and automatic content generation.</Description>
     <PackageTags>blazor;webassembly;static-site;markdown;seo;open-graph;rss</PackageTags>
     
@@ -37,11 +37,6 @@
     <None Include="build\OutWit.Web.Framework.targets" Pack="true" PackagePath="build\" />
     
     <!-- PowerShell scripts for content generation -->
-    <None Include="scripts\generate-content.ps1" Pack="true" PackagePath="build\scripts\" />
-    <None Include="scripts\generate-static-pages.ps1" Pack="true" PackagePath="build\scripts\" />
-    <None Include="scripts\generate-search-index.ps1" Pack="true" PackagePath="build\scripts\" />
-    <None Include="scripts\generate-rss-feed.ps1" Pack="true" PackagePath="build\scripts\" />
-    <None Include="scripts\generate-og-images.ps1" Pack="true" PackagePath="build\scripts\" />
   </ItemGroup>
   
   <!-- Make build assets available to ProjectReference consumers -->

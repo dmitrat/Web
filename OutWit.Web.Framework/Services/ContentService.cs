@@ -556,6 +556,7 @@ public class ContentService
             Title = frontmatter.Title ?? slug,
             Description = frontmatter.Description ?? "",
             Icon = frontmatter.Icon ?? "",
+            IconSvg = frontmatter.IconSvg ?? "",
             HtmlContent = html
         };
     }

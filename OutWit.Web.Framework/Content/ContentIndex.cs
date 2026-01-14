@@ -14,12 +14,14 @@ public class ContentIndex : ModelBase
     {
         if (modelBase is not ContentIndex other)
             return false;
-        
+
         return Blog.Is(other.Blog)
-            && Projects.Is(other.Projects)
-            && Docs.Is(other.Docs)
-            && Articles.Is(other.Articles)
-            && Features.Is(other.Features);
+               && Projects.Is(other.Projects)
+               && Docs.Is(other.Docs)
+               && Articles.Is(other.Articles)
+               && Features.Is(other.Features)
+               && Sections.Keys.Is(other.Sections.Keys)
+               && Sections.Values.SelectMany(x => x).Is(other.Sections.Values.SelectMany(x => x));
     }
 
     public override ContentIndex Clone()
@@ -30,7 +32,8 @@ public class ContentIndex : ModelBase
             Projects = Projects.ToList(),
             Docs = Docs.ToList(),
             Articles = Articles.ToList(),
-            Features = Features.ToList()
+            Features = Features.ToList(),
+            Sections = Sections.ToDictionary(kv => kv.Key, kv => kv.Value.ToList())
         };
     }
 
@@ -38,11 +41,38 @@ public class ContentIndex : ModelBase
 
     #region Properties
 
+    /// <summary>
+    /// Blog posts (hardcoded section).
+    /// </summary>
     public List<string> Blog { get; set; } = new();
+
+    /// <summary>
+    /// Project pages (hardcoded section - special behavior).
+    /// </summary>
     public List<string> Projects { get; set; } = new();
+
+    /// <summary>
+    /// Documentation pages (legacy, for backward compatibility).
+    /// New sections should use Sections dictionary.
+    /// </summary>
     public List<string> Docs { get; set; } = new();
+
+    /// <summary>
+    /// Article pages (legacy, for backward compatibility).
+    /// New sections should use Sections dictionary.
+    /// </summary>
     public List<string> Articles { get; set; } = new();
+
+    /// <summary>
+    /// Feature descriptions (hardcoded - special behavior).
+    /// </summary>
     public List<string> Features { get; set; } = new();
+
+    /// <summary>
+    /// Dynamic content sections defined in site.config.json.
+    /// Key = folder name, Value = list of files.
+    /// </summary>
+    public Dictionary<string, List<string>> Sections { get; set; } = new();
 
     #endregion
 

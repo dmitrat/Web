@@ -21,6 +21,7 @@ public class FeatureCard : ModelBase
             && Title.Is(other.Title)
             && Description.Is(other.Description)
             && Icon.Is(other.Icon)
+            && IconSvg.Is(other.IconSvg)
             && HtmlContent.Is(other.HtmlContent);
     }
 
@@ -33,6 +34,7 @@ public class FeatureCard : ModelBase
             Title = Title,
             Description = Description,
             Icon = Icon,
+            IconSvg = IconSvg,
             HtmlContent = HtmlContent
         };
     }
@@ -47,7 +49,18 @@ public class FeatureCard : ModelBase
     [ToString]
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
-    public string Icon { get; set; } = "";  // Emoji or path to SVG
+    
+    /// <summary>
+    /// Emoji or path to SVG icon file.
+    /// </summary>
+    public string Icon { get; set; } = "";
+    
+    /// <summary>
+    /// Inline SVG content for custom icons.
+    /// Loaded from adjacent .svg file or from iconSvg frontmatter field.
+    /// </summary>
+    public string IconSvg { get; set; } = "";
+    
     public string HtmlContent { get; set; } = "";
 
     #endregion

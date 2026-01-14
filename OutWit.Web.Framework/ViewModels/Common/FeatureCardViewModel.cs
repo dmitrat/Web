@@ -14,10 +14,16 @@ public class FeatureCardViewModel : ViewModelBase
     public string Icon { get; set; } = "";
     
     /// <summary>
-    /// Custom icon content (SVG, etc.)
+    /// Custom icon content (SVG, etc.) as RenderFragment
     /// </summary>
     [Parameter]
     public RenderFragment? IconContent { get; set; }
+    
+    /// <summary>
+    /// Inline SVG content as string (from markdown iconSvg field)
+    /// </summary>
+    [Parameter]
+    public string IconSvg { get; set; } = "";
     
     [Parameter]
     public string Title { get; set; } = "";

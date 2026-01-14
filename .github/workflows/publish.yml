@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - OutWit.Web.Framework
+          - OutWit.Web.Generator
           - OutWit.Web.Templates
       pushToNuGet:
         description: 'Push to nuget.org'

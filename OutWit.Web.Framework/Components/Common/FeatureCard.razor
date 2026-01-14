@@ -2,15 +2,21 @@
 @inherits FeatureCardViewModel
 
 <div class="feature-card">
-    @if (!string.IsNullOrEmpty(Icon))
+    @if (!string.IsNullOrEmpty(IconSvg))
     {
-        <div class="feature-card__icon">@Icon</div>
+        <div class="feature-card__icon feature-card__icon--svg">
+            @((MarkupString)IconSvg)
+        </div>
     }
     else if (IconContent != null)
     {
         <div class="feature-card__icon">
             @IconContent
         </div>
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        <div class="feature-card__icon">@Icon</div>
     }
     
     <h3 class="feature-card__title">@Title</h3>

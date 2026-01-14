@@ -30,7 +30,8 @@ public class FrontmatterData : ModelBase
             && ShowInHeader.Is(other.ShowInHeader)
             && IsFirstProject.Is(other.IsFirstProject)
             && Parent.Is(other.Parent)
-            && Icon.Is(other.Icon);
+            && Icon.Is(other.Icon)
+            && IconSvg.Is(other.IconSvg);
     }
 
     public override FrontmatterData Clone()
@@ -50,7 +51,8 @@ public class FrontmatterData : ModelBase
             ShowInHeader = ShowInHeader,
             IsFirstProject = IsFirstProject,
             Parent = Parent,
-            Icon = Icon
+            Icon = Icon,
+            IconSvg = IconSvg
         };
     }
 
@@ -72,7 +74,16 @@ public class FrontmatterData : ModelBase
     public bool ShowInHeader { get; set; } = false;
     public bool IsFirstProject { get; set; } = false;
     public string? Parent { get; set; }
-    public string? Icon { get; set; }  // Emoji or path to SVG
+    
+    /// <summary>
+    /// Emoji or path to SVG icon file.
+    /// </summary>
+    public string? Icon { get; set; }
+    
+    /// <summary>
+    /// Inline SVG content for custom icons (multiline YAML).
+    /// </summary>
+    public string? IconSvg { get; set; }
 
     #endregion
  

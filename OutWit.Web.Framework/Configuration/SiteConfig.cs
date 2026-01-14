@@ -28,7 +28,8 @@ public class SiteConfig : ModelBase
             && Footer.Is(other.Footer)
             && Contact.Is(other.Contact)
             && Search.Is(other.Search)
-            && Seo.Is(other.Seo);
+            && Seo.Is(other.Seo)
+            && ContentSections.Is(other.ContentSections);
     }
 
     public override SiteConfig Clone()
@@ -44,7 +45,8 @@ public class SiteConfig : ModelBase
             Footer = Footer.Clone(),
             Contact = Contact.Clone(),
             Search = Search.Clone(),
-            Seo = Seo.Clone()
+            Seo = Seo.Clone(),
+            ContentSections = ContentSections.Select(s => s.Clone()).ToList()
         };
     }
 
@@ -103,6 +105,12 @@ public class SiteConfig : ModelBase
     /// SEO configuration.
     /// </summary>
     public SeoConfig Seo { get; set; } = new();
+
+    /// <summary>
+    /// Custom content sections (like docs/articles but with custom names).
+    /// Allows creating sections like "solutions", "products", etc.
+    /// </summary>
+    public List<ContentSectionConfig> ContentSections { get; set; } = [];
 
     #endregion
 
