@@ -78,6 +78,7 @@
     text-decoration: none;
     padding: 0.5rem 0.75rem;
     transition: color 0.15s ease;
+    white-space: nowrap;
 }
 
 .header__nav-link:hover {
