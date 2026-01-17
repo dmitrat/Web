@@ -287,6 +287,46 @@ public class ContentService
         return articles.FirstOrDefault(a => a.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase));
     }
     
+    /// <summary>
+    /// Get a specific article by slug from a custom content folder.
+    /// </summary>
+    /// <param name="slug">Article slug.</param>
+    /// <param name="contentFolder">Content folder name (e.g., "use-cases").</param>
+    public async Task<ArticleCard?> GetArticleAsync(string slug, string contentFolder)
+    {
+        if (string.IsNullOrEmpty(contentFolder) || contentFolder == "articles")
+        {
+            return await GetArticleAsync(slug);
+        }
+        
+        try
+        {
+            var index = await GetContentIndexAsync();
+            if (index.Sections == null || !index.Sections.TryGetValue(contentFolder, out var files))
+            {
+                return null;
+            }
+            
+            foreach (var file in files)
+            {
+                var filePath = $"content/{contentFolder}/{file}";
+                var markdown = await Http.GetStringAsync(filePath);
+                var article = ParseArticle(file, markdown, contentFolder);
+                
+                if (article?.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    return article;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading article from {contentFolder}: {ex.Message}");
+        }
+        
+        return null;
+    }
+    
     private ArticleCard? ParseArticle(string filename, string markdown, string contentFolder)
     {
         var (frontmatter, _) = MarkdownService.ParseWithFrontmatter<FrontmatterData>(markdown);

@@ -84,6 +84,46 @@ public class SearchIndexGeneratorTests
         }
     }
 
+    [Test]
+    public async Task GenerateAsyncIncludesDynamicSectionsTest()
+    {
+        // Arrange  
+        var tempDir = CreateTempDirectory();
+        SetupContentDirectory(tempDir, "use-cases", "01-enterprise.md", """
+            ---
+            title: Enterprise Use Case
+            description: How enterprises use our product
+            ---
+            
+            Enterprise solutions content.
+            """);
+
+        var config = new GeneratorConfig { OutputPath = tempDir };
+        var generator = new SearchIndexGenerator(config);
+        var index = new ContentIndex
+        {
+            Sections = new Dictionary<string, List<string>>
+            {
+                ["use-cases"] = ["01-enterprise.md"]
+            }
+        };
+
+        try
+        {
+            // Act
+            await generator.GenerateAsync(index);
+
+            // Assert
+            var content = await File.ReadAllTextAsync(Path.Combine(tempDir, "search-index.json"));
+            Assert.That(content, Does.Contain("Enterprise Use Case"));
+            Assert.That(content, Does.Contain("use-cases/enterprise"));
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
     #endregion
 
     #region Tools

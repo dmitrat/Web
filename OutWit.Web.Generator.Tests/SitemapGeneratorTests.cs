@@ -115,6 +115,44 @@ public class SitemapGeneratorTests
         }
     }
 
+    [Test]
+    public async Task GenerateAsyncIncludesDynamicSectionsTest()
+    {
+        // Arrange
+        var tempDir = CreateTempDirectory();
+        var config = new GeneratorConfig { OutputPath = tempDir };
+        var generator = new SitemapGenerator(config, "https://example.com");
+        var index = new ContentIndex
+        {
+            Blog = ["2024-01-15-test-post.md"],
+            Sections = new Dictionary<string, List<string>>
+            {
+                ["use-cases"] = ["01-enterprise.md", "02-startup.md"],
+                ["solutions"] = ["cloud.md"]
+            }
+        };
+
+        try
+        {
+            // Act
+            await generator.GenerateAsync(index);
+
+            // Assert
+            var content = await File.ReadAllTextAsync(Path.Combine(tempDir, "sitemap.xml"));
+            
+            // Dynamic sections should be present
+            Assert.That(content, Does.Contain("use-cases/enterprise"));
+            Assert.That(content, Does.Contain("use-cases/startup"));
+            Assert.That(content, Does.Contain("solutions/cloud"));
+        }
+        finally
+        {
+            // Cleanup
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+        }
+    }
+
     #endregion
 
     #region Tools

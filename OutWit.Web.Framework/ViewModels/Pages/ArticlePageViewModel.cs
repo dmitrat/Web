@@ -36,7 +36,7 @@ public class ArticlePageViewModel : ViewModelBase
 
         try
         {
-            m_article = await ContentService.GetArticleAsync(Slug);
+            m_article = await ContentService.GetArticleAsync(Slug, ContentFolder);
             
             if (m_article != null)
             {
@@ -96,6 +96,9 @@ public class ArticlePageViewModel : ViewModelBase
     
     [Parameter]
     public string BackLinkText { get; set; } = "\u2190 Back";
+    
+    [Parameter]
+    public string ContentFolder { get; set; } = "articles";
 
     #endregion
 
