@@ -327,6 +327,48 @@ public class ContentService
         return null;
     }
     
+    /// <summary>
+    /// Get all articles from a custom content section.
+    /// </summary>
+    /// <param name="sectionFolder">Section folder name (e.g., "use-cases").</param>
+    public async Task<List<ArticleCard>> GetSectionArticlesAsync(string sectionFolder)
+    {
+        var articles = new List<ArticleCard>();
+        
+        try
+        {
+            var index = await GetContentIndexAsync();
+            if (index.Sections == null || !index.Sections.TryGetValue(sectionFolder, out var files))
+            {
+                return articles;
+            }
+            
+            foreach (var file in files)
+            {
+                try
+                {
+                    var filePath = $"content/{sectionFolder}/{file}";
+                    var markdown = await Http.GetStringAsync(filePath);
+                    var article = ParseArticle(file, markdown, sectionFolder);
+                    if (article != null)
+                    {
+                        articles.Add(article);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error loading {file} from {sectionFolder}: {ex.Message}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading section {sectionFolder}: {ex.Message}");
+        }
+        
+        return articles.OrderBy(a => a.Order).ToList();
+    }
+    
     private ArticleCard? ParseArticle(string filename, string markdown, string contentFolder)
     {
         var (frontmatter, _) = MarkdownService.ParseWithFrontmatter<FrontmatterData>(markdown);

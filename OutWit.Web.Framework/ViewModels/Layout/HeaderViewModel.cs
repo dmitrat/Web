@@ -45,9 +45,40 @@ public class HeaderViewModel : ViewModelBase, IDisposable
             PopulateArticlesDropdown(navItem, articles);
             PopulateDocsDropdown(navItem, docs);
             PopulateProjectsDropdown(navItem, projects);
+            
+            // Populate dynamic sections from ContentSections config
+            await PopulateSectionDropdown(navItem);
         }
         
         AddHeaderProjects(projects);
+    }
+
+    private async Task PopulateSectionDropdown(NavItem navItem)
+    {
+        // Skip if already has children or doesn't start with /
+        if (navItem.Children.Count != 0 || !navItem.Href.StartsWith("/"))
+            return;
+            
+        // Get section name from href (e.g., "/use-cases" -> "use-cases")
+        var sectionName = navItem.Href.TrimStart('/').Split('/')[0];
+        
+        // Skip hardcoded sections
+        if (sectionName is "articles" or "docs" or "projects" or "blog" or "" or "contact" or "search")
+            return;
+            
+        var sectionArticles = await ContentService.GetSectionArticlesAsync(sectionName);
+        if (sectionArticles.Count == 0)
+            return;
+            
+        navItem.Children = sectionArticles
+            .Where(a => a.ShowInMenu)
+            .OrderBy(a => a.Order)
+            .Select(a => new NavItem
+            {
+                Title = !string.IsNullOrEmpty(a.MenuTitle) ? a.MenuTitle : a.Title,
+                Href = $"/{sectionName}/{a.Slug}"
+            })
+            .ToList();
     }
 
     private void PopulateArticlesDropdown(NavItem navItem, List<ArticleCard> articles)
