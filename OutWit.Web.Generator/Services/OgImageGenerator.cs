@@ -115,21 +115,26 @@ public partial class OgImageGenerator : IAsyncDisposable
         {
             var css = await File.ReadAllTextAsync(themeCssPath, cancellationToken);
             
+            // Extract dark theme section if exists (for OG images we prefer dark theme)
+            var darkThemeMatch = DarkThemeSectionRegex().Match(css);
+            var cssToSearch = darkThemeMatch.Success ? darkThemeMatch.Groups[1].Value : css;
+            
             // Try to find accent color
-            var accentMatch = CssVariableRegex().Match(css);
+            var accentMatch = CssVariableRegex().Match(cssToSearch);
             if (accentMatch.Success)
             {
                 m_accentColor = accentMatch.Groups[1].Value.Trim();
             }
 
             // Try to find background color
-            var bgMatch = CssBackgroundVariableRegex().Match(css);
+            var bgMatch = CssBackgroundVariableRegex().Match(cssToSearch);
             if (bgMatch.Success)
             {
                 m_bgColor = bgMatch.Groups[1].Value.Trim();
             }
 
-            Console.WriteLine($"  Theme colors: accent={m_accentColor}, bg={m_bgColor}");
+            Console.WriteLine($"  Theme colors: accent={m_accentColor}, bg={m_bgColor}" + 
+                (darkThemeMatch.Success ? " (dark theme)" : " (root)"));
         }
         catch (Exception ex)
         {
@@ -251,7 +256,7 @@ public partial class OgImageGenerator : IAsyncDisposable
     }
 
     /// <summary>
-    /// Create HTML template for OG image (uses theme colors, matches PS version).
+    /// Create HTML template for OG image (uses external template file with logo support).
     /// </summary>
     protected internal string CreateOgImageHtml(string contentType, string title, string description, string url)
     {
@@ -263,98 +268,85 @@ public partial class OgImageGenerator : IAsyncDisposable
         var safeUrl = ContentHelpers.EscapeHtml(url);
         var bgColorDark = DarkenColor(m_bgColor);
 
-        // Template matching PS version structure
-        return $$"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body {
-                        width: 1200px;
-                        height: 630px;
-                        background: linear-gradient(135deg, {{m_bgColor}} 0%, {{bgColorDark}} 100%);
-                        font-family: 'Segoe UI', 'Inter', -apple-system, sans-serif;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        padding: 60px;
-                        color: #F5F7FA;
-                    }
-                    .content {
-                        flex: 1;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                    }
-                    .type {
-                        font-size: 24px;
-                        text-transform: uppercase;
-                        letter-spacing: 3px;
-                        color: {{m_accentColor}};
-                        margin-bottom: 20px;
-                        font-weight: 600;
-                    }
-                    .title {
-                        font-size: 64px;
-                        font-weight: 700;
-                        line-height: 1.1;
-                        margin-bottom: 24px;
-                        max-width: 900px;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 3;
-                        -webkit-box-orient: vertical;
-                        overflow: hidden;
-                    }
-                    .description {
-                        font-size: 28px;
-                        color: #A9B4C2;
-                        max-width: 800px;
-                        line-height: 1.4;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 2;
-                        -webkit-box-orient: vertical;
-                        overflow: hidden;
-                    }
-                    .footer {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                    }
-                    .site-name {
-                        font-size: 28px;
-                        font-weight: 600;
-                        color: {{m_accentColor}};
-                    }
-                    .url {
-                        font-size: 22px;
-                        color: #6B7A8F;
-                    }
-                    .accent-bar {
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        height: 8px;
-                        background: {{m_accentColor}};
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="content">
-                    {{(string.IsNullOrEmpty(safeType) ? "" : $"<div class=\"type\">{safeType}</div>")}}
-                    <h1 class="title">{{safeTitle}}</h1>
-                    {{(string.IsNullOrEmpty(safeDescription) ? "" : $"<p class=\"description\">{safeDescription}</p>")}}
-                </div>
-                <div class="footer">
-                    <span class="site-name">{{safeSiteName}}</span>
-                    <span class="url">{{safeUrl}}</span>
-                </div>
-                <div class="accent-bar"></div>
-            </body>
-            </html>
-            """;
+        // Try to load external template, fallback to embedded
+        var template = LoadTemplate();
+        
+        // Get logo as base64 data URL if exists
+        var logoHtml = GetLogoHtml();
+
+        // Replace placeholders
+        var html = template
+            .Replace("{{BG_COLOR}}", m_bgColor)
+            .Replace("{{BG_COLOR_DARK}}", bgColorDark)
+            .Replace("{{ACCENT_COLOR}}", m_accentColor)
+            .Replace("{{CONTENT_TYPE}}", string.IsNullOrEmpty(safeType) ? "" : $"<div class=\"type\">{safeType}</div>")
+            .Replace("{{TITLE}}", safeTitle)
+            .Replace("{{DESCRIPTION}}", string.IsNullOrEmpty(safeDescription) ? "" : $"<p class=\"description\">{safeDescription}</p>")
+            .Replace("{{LOGO}}", logoHtml)
+            .Replace("{{SITE_NAME}}", safeSiteName)
+            .Replace("{{URL}}", safeUrl);
+
+        return html;
+    }
+
+    private string LoadTemplate()
+    {
+        // Try to load from site's template directory first
+        var siteTemplatePath = Path.Combine(m_config.OutputPath, "templates", "og-image.html");
+        if (File.Exists(siteTemplatePath))
+        {
+            return File.ReadAllText(siteTemplatePath);
+        }
+
+        // Fallback to embedded template
+        return GetEmbeddedTemplate();
+    }
+
+    private string GetLogoHtml()
+    {
+        // Try to find logo in site directory
+        var logoPaths = new[]
+        {
+            Path.Combine(m_config.OutputPath, "images", "logo.png"),
+            Path.Combine(m_config.OutputPath, "images", "logo.svg"),
+            Path.Combine(m_config.OutputPath, "images", "logo-light.png"),
+            Path.Combine(m_config.OutputPath, "images", "logo-light.svg")
+        };
+
+        foreach (var logoPath in logoPaths)
+        {
+            if (File.Exists(logoPath))
+            {
+                try
+                {
+                    var bytes = File.ReadAllBytes(logoPath);
+                    var base64 = Convert.ToBase64String(bytes);
+                    var mimeType = logoPath.EndsWith(".svg") ? "image/svg+xml" : "image/png";
+                    return $"<img class=\"logo\" src=\"data:{mimeType};base64,{base64}\" alt=\"Logo\" />";
+                }
+                catch
+                {
+                    // Ignore errors, return empty
+                }
+            }
+        }
+
+        return ""; // No logo found
+    }
+
+    private static string GetEmbeddedTemplate()
+    {
+        var assembly = typeof(OgImageGenerator).Assembly;
+        var resourceName = "OutWit.Web.Generator.Templates.og-image.html";
+        
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+        {
+            throw new InvalidOperationException($"Embedded resource '{resourceName}' not found. Available resources: {string.Join(", ", assembly.GetManifestResourceNames())}");
+        }
+        
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 
     /// <summary>
@@ -399,6 +391,9 @@ public partial class OgImageGenerator : IAsyncDisposable
 
     [GeneratedRegex(@"--color-background:\s*([^;]+);")]
     private static partial Regex CssBackgroundVariableRegex();
+
+    [GeneratedRegex(@"\[data-theme=""dark""\]\s*\{([^}]+)\}", RegexOptions.Singleline)]
+    private static partial Regex DarkThemeSectionRegex();
 
     #endregion
 

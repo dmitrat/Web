@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, {{BG_COLOR}} 0%, {{BG_COLOR_DARK}} 100%);
+            font-family: 'Segoe UI', 'Inter', -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px;
+            color: #F5F7FA;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .type {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: {{ACCENT_COLOR}};
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 900px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .description {
+            font-size: 28px;
+            color: #A9B4C2;
+            max-width: 800px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .site-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+        .site-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: {{ACCENT_COLOR}};
+        }
+        .url {
+            font-size: 22px;
+            color: #6B7A8F;
+        }
+        .accent-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: {{ACCENT_COLOR}};
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        {{CONTENT_TYPE}}
+        <h1 class="title">{{TITLE}}</h1>
+        {{DESCRIPTION}}
+    </div>
+    <div class="footer">
+        <div class="site-info">
+            {{LOGO}}
+            <span class="site-name">{{SITE_NAME}}</span>
+        </div>
+        <span class="url">{{URL}}</span>
+    </div>
+    <div class="accent-bar"></div>
+</body>
+</html>

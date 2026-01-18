@@ -11,7 +11,7 @@
     <ToolCommandName>outwit-generate</ToolCommandName>
     
     <!-- NuGet Package Configuration -->
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Description>Content generator CLI for OutWit.Web static sites. Generates content index, sitemap, search index, RSS feed, OG images, and static HTML pages.</Description>
     <PackageTags>blazor;static-site;generator;cli;ssg;og-images</PackageTags>
     
@@ -27,6 +27,11 @@
   <!-- Reference the Framework to reuse types like ContentIndex, SiteConfig, MarkdownService -->
   <ItemGroup>
     <ProjectReference Include="..\OutWit.Web.Framework\OutWit.Web.Framework.csproj" />
+  </ItemGroup>
+
+  <!-- Embed HTML templates as resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\og-image.html" />
   </ItemGroup>
 
 </Project>
