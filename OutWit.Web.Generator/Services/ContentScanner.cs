@@ -43,7 +43,7 @@ public class ContentScanner
         var blogPath = Path.Combine(m_contentPath, "blog");
         if (Directory.Exists(blogPath))
         {
-            index.Blog = ScanFolder(blogPath, "*.md*", sortDescending: true);
+            index.Blog = ScanFolder(blogPath, "*.md", sortDescending: true);
         }
 
         // Projects (special folder structure)
@@ -57,20 +57,20 @@ public class ContentScanner
         var featuresPath = Path.Combine(m_contentPath, "features");
         if (Directory.Exists(featuresPath))
         {
-            index.Features = ScanFolder(featuresPath, "*.md*", sortDescending: false);
+            index.Features = ScanFolder(featuresPath, "*.md", sortDescending: false);
         }
 
         // Legacy hardcoded sections (for backward compatibility)
         var articlesPath = Path.Combine(m_contentPath, "articles");
         if (Directory.Exists(articlesPath))
         {
-            index.Articles = ScanFolder(articlesPath, "*.md*", sortDescending: false);
+            index.Articles = ScanFolder(articlesPath, "*.md", sortDescending: false);
         }
 
         var docsPath = Path.Combine(m_contentPath, "docs");
         if (Directory.Exists(docsPath))
         {
-            index.Docs = ScanFolder(docsPath, "*.md*", sortDescending: false);
+            index.Docs = ScanFolder(docsPath, "*.md", sortDescending: false);
         }
 
         // Scan dynamic sections from site.config.json
@@ -86,7 +86,7 @@ public class ContentScanner
                 var sectionPath = Path.Combine(m_contentPath, section.Folder);
                 if (Directory.Exists(sectionPath))
                 {
-                    index.Sections[section.Folder] = ScanFolder(sectionPath, "*.md*", sortDescending: false);
+                    index.Sections[section.Folder] = ScanFolder(sectionPath, "*.md", sortDescending: false);
                 }
             }
         }

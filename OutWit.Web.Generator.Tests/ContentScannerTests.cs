@@ -198,6 +198,50 @@ public class ContentScannerTests
         }
     }
 
+    [Test]
+    public async Task ScanAsyncExcludesCompressedFilesTest()
+    {
+        // Arrange
+        var tempDir = CreateTempDirectory();
+        var blogDir = Path.Combine(tempDir, "blog");
+        var featuresDir = Path.Combine(tempDir, "features");
+        Directory.CreateDirectory(blogDir);
+        Directory.CreateDirectory(featuresDir);
+        
+        // Create .md files and their compressed versions (.gz, .br)
+        File.WriteAllText(Path.Combine(blogDir, "2024-01-15-test-post.md"), "content");
+        File.WriteAllText(Path.Combine(blogDir, "2024-01-15-test-post.md.gz"), "compressed");
+        File.WriteAllText(Path.Combine(blogDir, "2024-01-15-test-post.md.br"), "compressed");
+        
+        File.WriteAllText(Path.Combine(featuresDir, "01-feature.md"), "content");
+        File.WriteAllText(Path.Combine(featuresDir, "01-feature.md.gz"), "compressed");
+        File.WriteAllText(Path.Combine(featuresDir, "01-feature.md.br"), "compressed");
+
+        var scanner = new ContentScanner(tempDir);
+
+        try
+        {
+            // Act
+            var index = await scanner.ScanAsync();
+
+            // Assert - should only include .md files, not .gz or .br
+            Assert.That(index.Blog, Has.Count.EqualTo(1));
+            Assert.That(index.Blog[0], Is.EqualTo("2024-01-15-test-post.md"));
+            Assert.That(index.Blog, Has.None.Matches<string>(f => f.EndsWith(".gz")));
+            Assert.That(index.Blog, Has.None.Matches<string>(f => f.EndsWith(".br")));
+            
+            Assert.That(index.Features, Has.Count.EqualTo(1));
+            Assert.That(index.Features[0], Is.EqualTo("01-feature.md"));
+            Assert.That(index.Features, Has.None.Matches<string>(f => f.EndsWith(".gz")));
+            Assert.That(index.Features, Has.None.Matches<string>(f => f.EndsWith(".br")));
+        }
+        finally
+        {
+            // Cleanup
+            Directory.Delete(tempDir, true);
+        }
+    }
+
     #endregion
 
     #region Tools
