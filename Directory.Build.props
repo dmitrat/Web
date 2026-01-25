@@ -16,12 +16,13 @@
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<EmbedUntrackedSources>true</EmbedUntrackedSources>
 
+	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
 	<PackageProjectUrl>https://github.com/dmitrat/Web/</PackageProjectUrl>
 
 	<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 
 	<PackageIcon>OutWit-logo.png</PackageIcon>
-	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
@@ -34,6 +35,7 @@
 		<None Include="LICENSE" Pack="true" PackagePath="\" />
 		<None Include="OutWit-logo.png" Pack="true" PackagePath="\" />
 		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="NOTICE" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(IsTestProject)' != 'true'">
@@ -42,7 +44,7 @@
 	</ItemGroup>
   
   	<ItemGroup>
-	  <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+	  <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>

@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     
     <!-- NuGet Package Configuration (specific to this project) -->
-    <Version>1.1.11</Version>
+    <Version>1.1.12</Version>
     <Description>Blazor WebAssembly framework for creating static websites with markdown content, SEO optimization, and automatic content generation.</Description>
     <PackageTags>blazor;webassembly;static-site;markdown;seo;open-graph;rss</PackageTags>
     
@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
-    <PackageReference Include="OutWit.Common.MVVM.Blazor" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2" />
+    <PackageReference Include="OutWit.Common.MVVM.Blazor" Version="2.0.2" />
     <PackageReference Include="Markdig" Version="0.44.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>

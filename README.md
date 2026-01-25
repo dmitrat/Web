@@ -207,10 +207,21 @@ jobs:
 
 ## License
 
-This software is licensed under the **Non-Commercial License (NCL)**.
+Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
-- Free for personal, educational, and research purposes
-- Commercial use requires a separate license agreement
-- Contact licensing@ratner.io for commercial licensing inquiries
+## Attribution (optional)
 
-See the full [LICENSE](LICENSE) file for details.
+If you use OutWit.Web in a product, a mention is appreciated (but not required), for example:
+"Powered by OutWit.Web (https://ratner.io/)".
+
+## Trademark / Project name
+
+"OutWit" and the OutWit logo are used to identify the official project by Dmitry Ratner.
+
+You may:
+- refer to the project name in a factual way (e.g., "built with OutWit.Web");
+- use the name to indicate compatibility (e.g., "OutWit.Web-compatible").
+
+You may not:
+- use "OutWit.Web" as the name of a fork or a derived product in a way that implies it is the official project;
+- use the OutWit.Web logo to promote forks or derived products without permission.
