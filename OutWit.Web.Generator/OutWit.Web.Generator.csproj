@@ -11,7 +11,7 @@
     <ToolCommandName>outwit-generate</ToolCommandName>
     
     <!-- NuGet Package Configuration -->
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
     <Description>Content generator CLI for OutWit.Web static sites. Generates content index, navigation index, content metadata, sitemap, search index, RSS feed, OG images, and static HTML pages.</Description>
     <PackageTags>blazor;static-site;generator;cli;ssg;og-images</PackageTags>
     

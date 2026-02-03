@@ -52,10 +52,10 @@ public class HostingConfigGenerator
 
     private async Task GenerateCloudflareConfigAsync(CancellationToken cancellationToken)
     {
-        // _headers file (synced with PS version)
+        // _headers file for caching and security
         var headersContent = """
             # Cloudflare Pages headers
-            # https://developers.cloudflare.com/pages/platform/headers
+            # https://developers.cloudflare.com/pages/configuration/headers/
 
             # Cache static assets
             /_framework/*
@@ -85,26 +85,25 @@ public class HostingConfigGenerator
         await File.WriteAllTextAsync(headersPath, headersContent, cancellationToken);
         Console.WriteLine($"  Created: {headersPath}");
 
-        // _redirects file (SPA fallback like PS version)
-        var redirectsContent = """
-            # Cloudflare Pages redirects
-            # SPA fallback - serve index.html for all routes not matching a file
-            /*  /index.html  200
-            """;
-
-        var redirectsPath = Path.Combine(m_config.OutputPath, "_redirects");
-        await File.WriteAllTextAsync(redirectsPath, redirectsContent, cancellationToken);
-        Console.WriteLine($"  Created: {redirectsPath}");
+        // For Cloudflare Pages SPA:
+        // - If no 404.html exists, Cloudflare automatically serves index.html for all routes
+        // - Static assets are served directly (Cloudflare checks file existence first)
+        // - We do NOT need _redirects for SPA fallback
+        // 
+        // See: https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering
+        //
+        // Note: We don't generate 404.html in the root, so SPA mode is automatic.
+        // If you need a custom 404 page, create it at /404/index.html instead.
     }
 
     private async Task GenerateNetlifyConfigAsync(CancellationToken cancellationToken)
     {
-        // _headers file (synced with PS version)
+        // _headers file
         var headersContent = """
             # Netlify headers
             # https://docs.netlify.com/routing/headers/
 
-            _framework/*
+            /_framework/*
               Cache-Control: public, max-age=31536000, immutable
 
             /css/*
@@ -121,15 +120,20 @@ public class HostingConfigGenerator
               X-Frame-Options: DENY
               Referrer-Policy: strict-origin-when-cross-origin
             """;
-
+    
         var headersPath = Path.Combine(m_config.OutputPath, "_headers");
         await File.WriteAllTextAsync(headersPath, headersContent, cancellationToken);
         Console.WriteLine($"  Created: {headersPath}");
 
-        // _redirects file (SPA fallback)
+        // _redirects file for Netlify SPA fallback
+        // Netlify requires explicit SPA fallback rule
+        // The 200 status means "rewrite" (serve index.html but keep the URL)
+        // Netlify checks for existing files BEFORE applying redirects
         var redirectsContent = """
             # Netlify redirects
-            # SPA fallback
+            # https://docs.netlify.com/routing/redirects/
+            
+            # SPA fallback - Netlify serves existing files first, then falls back to index.html
             /*  /index.html  200
             """;
 
@@ -140,6 +144,8 @@ public class HostingConfigGenerator
 
     private async Task GenerateVercelConfigAsync(CancellationToken cancellationToken)
     {
+        // Vercel uses vercel.json for configuration
+        // The regex excludes static asset paths from the SPA rewrite
         var jsonContent = """
             {
               "rewrites": [
@@ -186,7 +192,9 @@ public class HostingConfigGenerator
         await File.WriteAllTextAsync(nojekyllPath, "", cancellationToken);
         Console.WriteLine($"  Created: {nojekyllPath}");
 
-        // 404.html for SPA routing (with sessionStorage like PS version)
+        // 404.html for SPA routing
+        // GitHub Pages serves 404.html for all missing paths
+        // We use JavaScript to redirect to root with the path stored in sessionStorage
         var html404Content = """
             <!DOCTYPE html>
             <html>
@@ -195,6 +203,8 @@ public class HostingConfigGenerator
                 <title>Redirecting...</title>
                 <script>
                     // GitHub Pages SPA redirect
+                    // Store the attempted path and redirect to root
+                    // The SPA will read sessionStorage and handle routing
                     var path = window.location.pathname;
                     if (path !== '/' && path !== '/index.html') {
                         sessionStorage.setItem('redirectPath', path);

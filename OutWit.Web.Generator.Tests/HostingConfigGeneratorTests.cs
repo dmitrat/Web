@@ -13,7 +13,7 @@ public class HostingConfigGeneratorTests
     #region Tests
 
     [Test]
-    public async Task GenerateAsyncCloudflareCreatesHeadersAndRedirectsTest()
+    public async Task GenerateAsyncCloudflareCreatesHeadersOnlyTest()
     {
         // Arrange
         var tempDir = CreateTempDirectory();
@@ -29,15 +29,14 @@ public class HostingConfigGeneratorTests
             // Act
             await generator.GenerateAsync();
 
-            // Assert
+            // Assert - Cloudflare only needs _headers, SPA fallback is automatic
             Assert.That(File.Exists(Path.Combine(tempDir, "_headers")), Is.True);
-            Assert.That(File.Exists(Path.Combine(tempDir, "_redirects")), Is.True);
+            Assert.That(File.Exists(Path.Combine(tempDir, "_redirects")), Is.False, 
+                "Cloudflare Pages has built-in SPA support, _redirects not needed");
 
             var headers = await File.ReadAllTextAsync(Path.Combine(tempDir, "_headers"));
             Assert.That(headers, Does.Contain("Cache-Control"));
-            
-            var redirects = await File.ReadAllTextAsync(Path.Combine(tempDir, "_redirects"));
-            Assert.That(redirects, Does.Contain("/*  /index.html  200"));
+            Assert.That(headers, Does.Contain("/_framework/*"));
         }
         finally
         {
@@ -62,7 +61,7 @@ public class HostingConfigGeneratorTests
             // Act
             await generator.GenerateAsync();
 
-            // Assert - Netlify now uses _headers and _redirects (synced with PS)
+            // Assert - Netlify needs both _headers and _redirects
             Assert.That(File.Exists(Path.Combine(tempDir, "_headers")), Is.True);
             Assert.That(File.Exists(Path.Combine(tempDir, "_redirects")), Is.True);
 
@@ -102,6 +101,7 @@ public class HostingConfigGeneratorTests
             var content = await File.ReadAllTextAsync(vercelJsonPath);
             Assert.That(content, Does.Contain("rewrites"));
             Assert.That(content, Does.Contain("headers"));
+            Assert.That(content, Does.Contain("_framework"));
         }
         finally
         {
@@ -131,9 +131,9 @@ public class HostingConfigGeneratorTests
             Assert.That(File.Exists(Path.Combine(tempDir, ".nojekyll")), Is.True);
             Assert.That(File.Exists(Path.Combine(tempDir, "404.html")), Is.True);
 
-            // 404.html is a redirect page for SPA routing
             var content = await File.ReadAllTextAsync(Path.Combine(tempDir, "404.html"));
             Assert.That(content, Does.Contain("Redirecting"));
+            Assert.That(content, Does.Contain("sessionStorage"));
         }
         finally
         {
