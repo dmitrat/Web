@@ -1,6 +1,8 @@
-# OutWit.Web
+# WitDocs
 
 A Blazor WebAssembly platform for building content-driven static websites with markdown content, SEO optimization, and automatic content generation.
+
+**Website:** [https://witdocs.io](https://witdocs.io)
 
 ## Packages
 
@@ -211,17 +213,17 @@ Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Attribution (optional)
 
-If you use OutWit.Web in a product, a mention is appreciated (but not required), for example:
-"Powered by OutWit.Web (https://ratner.io/)".
+If you use WitDocs in a product, a mention is appreciated (but not required), for example:
+"Built with [WitDocs](https://witdocs.io)".
 
 ## Trademark / Project name
 
-"OutWit" and the OutWit logo are used to identify the official project by Dmitry Ratner.
+"WitDocs" and "OutWit" are used to identify the official project by Dmitry Ratner.
 
 You may:
-- refer to the project name in a factual way (e.g., "built with OutWit.Web");
-- use the name to indicate compatibility (e.g., "OutWit.Web-compatible").
+- refer to the project name in a factual way (e.g., "built with WitDocs");
+- use the name to indicate compatibility (e.g., "WitDocs-compatible").
 
 You may not:
-- use "OutWit.Web" as the name of a fork or a derived product in a way that implies it is the official project;
-- use the OutWit.Web logo to promote forks or derived products without permission.
+- use "WitDocs" as the name of a fork or a derived product in a way that implies it is the official project;
+- use the WitDocs logo to promote forks or derived products without permission.
