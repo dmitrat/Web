@@ -43,6 +43,28 @@
     margin: 0;
 }
 
+/* Footer additional lines with markdown support */
+.footer__lines {
+    margin-top: 0.75rem;
+}
+
+.footer__line {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    margin: 0.25rem 0 0 0;
+}
+
+.footer__line a {
+    color: var(--color-accent-green);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer__line a:hover {
+    color: var(--color-text-heading);
+    text-decoration: underline;
+}
+
 /* ======================================
    FooterExpanded - Multi-column Footer
    ====================================== */

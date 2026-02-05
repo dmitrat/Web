@@ -20,6 +20,9 @@
   ],
   "footer": {
     "copyright": "{{AuthorName}}",
+    "lines": [
+      "Built with [WitDocs](https://witdocs.io)"
+    ],
     "linkGroups": [],
     "socialLinks": [
       {

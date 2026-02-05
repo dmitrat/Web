@@ -18,6 +18,7 @@ public class FooterConfig : ModelBase
             return false;
 
         return Copyright.Is(other.Copyright)
+               && Lines.Is(other.Lines)
                && LinkGroups.Is(other.LinkGroups)
                && SocialLinks.Is(other.SocialLinks);
     }
@@ -27,6 +28,7 @@ public class FooterConfig : ModelBase
         return new FooterConfig
         {
             Copyright = Copyright,
+            Lines = Lines.ToList(),
             LinkGroups = LinkGroups.Select(group => group.Clone()).ToList(),
             SocialLinks = SocialLinks.Select(link => link.Clone()).ToList()
         };
@@ -37,6 +39,12 @@ public class FooterConfig : ModelBase
     #region Properties
 
     public string Copyright { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Additional footer lines that support inline markdown (e.g., links).
+    /// Each line can contain markdown links like "Built with [WitDocs](https://witdocs.io)".
+    /// </summary>
+    public List<string> Lines { get; set; } = [];
     
     public List<FooterLinkGroup> LinkGroups { get; set; } = [];
     

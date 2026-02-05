@@ -18,7 +18,7 @@
 
 	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
-	<PackageProjectUrl>https://github.com/dmitrat/Web/</PackageProjectUrl>
+	<PackageProjectUrl>https://witdocs.io</PackageProjectUrl>
 
 	<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 

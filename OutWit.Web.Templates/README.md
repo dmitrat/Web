@@ -1,6 +1,6 @@
 # OutWit.Web.Templates
 
-Project templates for creating static websites using OutWit.Web.Framework.
+Part of [WitDocs](https://witdocs.io) — project templates for creating static websites using WitDocs framework.
 
 ## Installation
 
@@ -108,17 +108,17 @@ Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Attribution (optional)
 
-If you use OutWit.Web.Templates in a product, a mention is appreciated (but not required), for example:
-"Powered by OutWit.Web.Templates (https://ratner.io/)".
+If you use WitDocs in a product, a mention is appreciated (but not required), for example:
+"Built with [WitDocs](https://witdocs.io)".
 
 ## Trademark / Project name
 
-"OutWit" and the OutWit logo are used to identify the official project by Dmitry Ratner.
+"WitDocs" and "OutWit" are used to identify the official project by Dmitry Ratner.
 
 You may:
-- refer to the project name in a factual way (e.g., "built with OutWit.Web.Templates");
-- use the name to indicate compatibility (e.g., "OutWit.Web.Templates-compatible").
+- refer to the project name in a factual way (e.g., "built with WitDocs");
+- use the name to indicate compatibility (e.g., "WitDocs-compatible").
 
 You may not:
-- use "OutWit.Web.Templates" as the name of a fork or a derived product in a way that implies it is the official project;
-- use the OutWit.Web.Templates logo to promote forks or derived products without permission.
+- use "WitDocs" as the name of a fork or a derived product in a way that implies it is the official project;
+- use the WitDocs logo to promote forks or derived products without permission.

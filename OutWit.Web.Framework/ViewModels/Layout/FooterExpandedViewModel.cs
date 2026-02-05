@@ -22,6 +22,18 @@ public class FooterExpandedViewModel : ViewModelBase
 
     #endregion
 
+    #region Functions
+
+    /// <summary>
+    /// Renders a footer line with inline markdown support (links, bold, etc.).
+    /// </summary>
+    protected string RenderLine(string line)
+    {
+        return MarkdownService.ToHtmlInline(line);
+    }
+
+    #endregion
+
     #region Properties
 
     protected SiteConfig? Config => m_config;
@@ -32,6 +44,9 @@ public class FooterExpandedViewModel : ViewModelBase
 
     [Inject]
     public ConfigService ConfigService { get; set; } = null!;
+
+    [Inject]
+    public MarkdownService MarkdownService { get; set; } = null!;
 
     #endregion
 }

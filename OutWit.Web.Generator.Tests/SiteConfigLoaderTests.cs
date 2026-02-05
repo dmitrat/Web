@@ -116,6 +116,83 @@ public class SiteConfigLoaderTests
         }
     }
 
+    [Test]
+    public async Task LoadAsyncParsesFooterLinesWithMarkdownTest()
+    {
+        // Arrange
+        var tempDir = CreateTempDirectory();
+        var configPath = Path.Combine(tempDir, "site.config.json");
+        
+        await File.WriteAllTextAsync(configPath, """
+            {
+              "siteName": "Test Site",
+              "baseUrl": "https://example.com",
+              "footer": {
+                "copyright": "Test Author",
+                "lines": [
+                  "Built with [WitDocs](https://witdocs.io)",
+                  "Powered by [Blazor](https://blazor.net)"
+                ],
+                "socialLinks": []
+              }
+            }
+            """);
+
+        var loader = new SiteConfigLoader(configPath);
+
+        try
+        {
+            // Act
+            var config = await loader.LoadAsync();
+
+            // Assert
+            Assert.That(config, Is.Not.Null);
+            Assert.That(config!.Footer.Copyright, Is.EqualTo("Test Author"));
+            Assert.That(config.Footer.Lines, Has.Count.EqualTo(2));
+            Assert.That(config.Footer.Lines[0], Is.EqualTo("Built with [WitDocs](https://witdocs.io)"));
+            Assert.That(config.Footer.Lines[1], Is.EqualTo("Powered by [Blazor](https://blazor.net)"));
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Test]
+    public async Task LoadAsyncHandlesEmptyFooterLinesTest()
+    {
+        // Arrange
+        var tempDir = CreateTempDirectory();
+        var configPath = Path.Combine(tempDir, "site.config.json");
+        
+        await File.WriteAllTextAsync(configPath, """
+            {
+              "siteName": "Test Site",
+              "baseUrl": "https://example.com",
+              "footer": {
+                "copyright": "Test Author"
+              }
+            }
+            """);
+
+        var loader = new SiteConfigLoader(configPath);
+
+        try
+        {
+            // Act
+            var config = await loader.LoadAsync();
+
+            // Assert
+            Assert.That(config, Is.Not.Null);
+            Assert.That(config!.Footer.Lines, Is.Not.Null);
+            Assert.That(config.Footer.Lines, Is.Empty);
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
     #endregion
 
     #region Tools

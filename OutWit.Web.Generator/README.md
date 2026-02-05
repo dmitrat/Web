@@ -1,6 +1,6 @@
 # OutWit.Web.Generator
 
-A .NET CLI tool for generating static content, OG images, sitemap, search index, and RSS feeds for OutWit.Web sites.
+Part of [WitDocs](https://witdocs.io) — a .NET CLI tool for generating static content, OG images, sitemap, search index, and RSS feeds for WitDocs sites.
 
 ## Installation
 
@@ -162,17 +162,17 @@ Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Attribution (optional)
 
-If you use OutWit.Web.Generator in a product, a mention is appreciated (but not required), for example:
-"Powered by OutWit.Web.Generator (https://ratner.io/)".
+If you use WitDocs in a product, a mention is appreciated (but not required), for example:
+"Built with [WitDocs](https://witdocs.io)".
 
 ## Trademark / Project name
 
-"OutWit" and the OutWit logo are used to identify the official project by Dmitry Ratner.
+"WitDocs" and "OutWit" are used to identify the official project by Dmitry Ratner.
 
 You may:
-- refer to the project name in a factual way (e.g., "built with OutWit.Web.Generator");
-- use the name to indicate compatibility (e.g., "OutWit.Web.Generator-compatible").
+- refer to the project name in a factual way (e.g., "built with WitDocs");
+- use the name to indicate compatibility (e.g., "WitDocs-compatible").
 
 You may not:
-- use "OutWit.Web.Generator" as the name of a fork or a derived product in a way that implies it is the official project;
-- use the OutWit.Web.Generator logo to promote forks or derived products without permission.
+- use "WitDocs" as the name of a fork or a derived product in a way that implies it is the official project;
+- use the WitDocs logo to promote forks or derived products without permission.
